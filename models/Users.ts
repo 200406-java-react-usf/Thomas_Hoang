@@ -4,12 +4,12 @@ export class User {
     first: string;
     last: string;
     //Multdimensional array to allow user to have multiple different products
-    inventory: [[number, number]];
+    inventory: [[string, number, number]];
 
-    constructor(un: string, fn: string, ln: string, productID: number, productQuantity: number){
+    constructor(un: string, fn: string, ln: string,productName:string, productQuantity: number, personalRating: number){
         this.username = un;
         this.first = fn;
         this.last = ln;
-        this.inventory = [[productID, productQuantity]];
+        this.inventory = [[productName, productQuantity, personalRating]];
     }
 };
