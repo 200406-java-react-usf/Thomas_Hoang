@@ -1,0 +1,22 @@
+{
+  "name": "thomas_hoang",
+  "version": "1.0.0",
+  "description": "Project 0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/200406-java-react-usf/Thomas_Hoang.git"
+  },
+  "author": "Thomas Hoang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/200406-java-react-usf/Thomas_Hoang/issues"
+  },
+  "homepage": "https://github.com/200406-java-react-usf/Thomas_Hoang#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  }
+}
