@@ -4,7 +4,9 @@
   "description": "Project 0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && node ./build/index.js",
+    "test": "jest --watch --no-cache",
+    "coverage": "jest --coverage --no-cache"
   },
   "repository": {
     "type": "git",
@@ -17,13 +19,22 @@
   },
   "homepage": "https://github.com/200406-java-react-usf/Thomas_Hoang#readme",
   "devDependencies": {
+    "@types/express": "^4.17.6",
+    "@types/express-session": "^1.17.0",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.2",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "eslint": "^6.8.0",
     "jest": "^25.4.0",
+    "morgan": "^1.10.0",
     "ts-jest": "^25.4.0",
     "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1"
   }
 }
