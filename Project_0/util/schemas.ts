@@ -10,9 +10,10 @@ export interface UserSchema {
 export interface WaxSchema {
     id: number,
     product_name: string,
+    scent_category:string,
     brand_id: number,
     product_price: number,
-    limited_edition: string,
+    limited_edition: boolean,
     scent_strength: number,
     scent_description: string
 }
