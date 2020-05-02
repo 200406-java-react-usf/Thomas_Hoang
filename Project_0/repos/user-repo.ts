@@ -19,7 +19,6 @@ export class UserRepository implements CrudRepository<User> {
             au.password, 
             au.first_name,
             au.last_name,
-            au.email,
             ur.name as role_name
         from app_users au
         join user_roles ur
