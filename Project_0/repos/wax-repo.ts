@@ -4,11 +4,12 @@ import {
     BadRequestError, 
     ResourceNotFoundError,
     ResourcePersistenceError,
-    NotImplementedError
+    NotImplementedError,
+    InternalServerError
 } from '../errors/errors';
 import { PoolClient } from 'pg';
 import { connectionPool } from '..';
-import { mapUserResultSet } from '../util/result-set-mapper';
+import { mapWaxResultSet } from '../util/result-set-mapper';
 
 export class WaxRepository implements CrudRepository<Wax> {
     
@@ -36,7 +37,13 @@ export class WaxRepository implements CrudRepository<Wax> {
             let sql = `${this.baseQuery}`;
             let rs = await client.query(sql);
             return rs.rows.map(mapWaxResultSet);
+        }catch (e) {
+            throw new InternalServerError();
+        }finally {
+            client && client.release();
         }
     }
+
+    
 
 }
