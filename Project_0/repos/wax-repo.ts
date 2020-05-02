@@ -60,7 +60,7 @@ export class WaxRepository implements CrudRepository<Wax> {
         }
     }
 
-    async getUserByUniqueKey(key: string, val: string): Promise<Wax> {
+    async getWaxByUniqueKey(key: string, val: string): Promise<Wax> {
 
         let client: PoolClient;
 
@@ -76,34 +76,66 @@ export class WaxRepository implements CrudRepository<Wax> {
         }
     }
 
-    async save(newWax: Wax): Promise<Wax> {
+    // Need to come back to this because of special circumstances of saving waxes.
+    // async save(newWax: Wax): Promise<Wax> {
             
+    //     let client: PoolClient;
+
+    //     try {
+    //         client = await connectionPool.connect();
+
+    //         let roleId = (await client.query('select id from user_roles where rolename = $1', [newWax.userRole])).rows[0].id;
+            
+    //         let sql = `
+    //             insert into users (username, first_name, last_name, user_role) 
+    //             values ($1, $2, $3, $4, $5) returning id
+    //         `;
+
+    //         let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
+            
+    //         newWax.productID = rs.rows[0].id;
+            
+    //         return newWax;
+
+    //     } catch (e) {
+    //         console.log(e);
+    //         throw new InternalServerError();
+    //     } finally {
+    //         client && client.release();
+    //     }
+    // }
+
+    //Need to think of SQL statement for this
+    async update(updateWax: Wax): Promise<boolean> {
+
         let client: PoolClient;
 
         try {
             client = await connectionPool.connect();
-
-            // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select id from user_roles where rolename = $1', [newWax.userRole])).rows[0].id;
-            
-            let sql = `
-                insert into users (username, first_name, last_name, user_role) 
-                values ($1, $2, $3, $4, $5) returning id
-            `;
-
-            let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
-            
-            newWax.productID = rs.rows[0].id;
-            
-            return newWax;
-
-        } catch (e) {
-            console.log(e);
+            let sql = ``;
+            let rs = await client.query(sql, []);
+            return true;
+        }catch (e) {
             throw new InternalServerError();
-        } finally {
+        }finally {
             client && client.release();
         }
-    
     }
 
+    //Need to think of SQL statement for this
+    async deleteById(id: number): Promise<boolean> {
+
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = ``;
+            let rs = await client.query(sql, []);
+            return true;
+        }catch (e) {
+            throw new InternalServerError();
+        }finally {
+            client && client.release();
+        }
+    }
 }
