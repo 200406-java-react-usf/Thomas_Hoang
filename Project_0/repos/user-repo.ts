@@ -14,15 +14,15 @@ export class UserRepository implements CrudRepository<User> {
 
     baseQuery = `
         select
-            au.id, 
-            au.username, 
-            au.password, 
-            au.first_name,
-            au.last_name,
-            ur.name as role_name
-        from app_users au
+            u.id, 
+            u.username, 
+            u.user_password, 
+            u.first_name,
+            u.last_name,
+            ur.rolename as role_name
+        from users u
         join user_roles ur
-        on au.role_id = ur.id
+        on u.user_role = ur.roleid
     `;
 
     async getAll(): Promise<User[]> {
@@ -48,7 +48,7 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where au.id = $1`;
+            let sql = `${this.baseQuery} where u.id = $1`;
             let rs = await client.query(sql, [id]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
@@ -66,7 +66,7 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where au.${key} = $1`;
+            let sql = `${this.baseQuery} where u.${key} = $1`;
             let rs = await client.query(sql, [val]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
@@ -84,7 +84,7 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where au.username = $1 and au.password = $2`;
+            let sql = `${this.baseQuery} where u.username = $1 and u.user_password = $2`;
             let rs = await client.query(sql, [un, pw]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
@@ -103,14 +103,14 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
 
             // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select id from user_roles where name = $1', [newUser.userRole])).rows[0].id;
+            let roleId = (await client.query('select id from user_roles where rolename = $1', [newUser.userRole])).rows[0].id;
             
             let sql = `
-                insert into app_users (username, first_name, last_name, role_id) 
-                values ($1, $2, $3, $4) returning id
+                insert into users (username, first_name, last_name, user_role) 
+                values ($1, $2, $3, $4, $5) returning id
             `;
 
-            let rs = await client.query(sql, [newUser.username, newUser.first, newUser.last, roleId]);
+            let rs = await client.query(sql, [newUser.username,  newUser.password, newUser.first, newUser.last, roleId]);
             
             newUser.userID = rs.rows[0].id;
             
