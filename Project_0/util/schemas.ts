@@ -6,10 +6,17 @@ export interface UserSchema {
     role_name: string
 }
 
-export interface PostSchema {
-
+export interface WaxSchema {
+    id: number,
+    product_name: string,
+    brand_id: number,
+    product_price: number,
+    limited_edition: string,
+    scent_strength: number,
+    scent_description: string
 }
 
-export interface ThreadSchema {
-    
+export interface BrandSchema {
+    id: number,
+    brand_name: string
 }
