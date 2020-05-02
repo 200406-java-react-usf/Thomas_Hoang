@@ -44,7 +44,7 @@ export class WaxRepository implements CrudRepository<Wax> {
         }
     }
 
-    async getByID(id: number): Promise<Wax> {
+    async getById(id: number): Promise<Wax> {
 
         let client: PoolClient;
 
@@ -77,33 +77,33 @@ export class WaxRepository implements CrudRepository<Wax> {
     }
 
     // Need to come back to this because of special circumstances of saving waxes.
-    // async save(newWax: Wax): Promise<Wax> {
+    async save(newWax: Wax): Promise<Wax> {
             
-    //     let client: PoolClient;
+        let client: PoolClient;
 
-    //     try {
-    //         client = await connectionPool.connect();
+        try {
+            client = await connectionPool.connect();
 
-    //         let roleId = (await client.query('select id from user_roles where rolename = $1', [newWax.userRole])).rows[0].id;
+            let roleId = (await client.query('select id from user_roles where rolename = $1', [newWax.userRole])).rows[0].id;
             
-    //         let sql = `
-    //             insert into users (username, first_name, last_name, user_role) 
-    //             values ($1, $2, $3, $4, $5) returning id
-    //         `;
+            let sql = `
+                insert into users (username, first_name, last_name, user_role) 
+                values ($1, $2, $3, $4, $5) returning id
+            `;
 
-    //         let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
+            let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
             
-    //         newWax.productID = rs.rows[0].id;
+            newWax.productID = rs.rows[0].id;
             
-    //         return newWax;
+            return newWax;
 
-    //     } catch (e) {
-    //         console.log(e);
-    //         throw new InternalServerError();
-    //     } finally {
-    //         client && client.release();
-    //     }
-    // }
+        } catch (e) {
+            console.log(e);
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
 
     //Need to think of SQL statement for this
     async update(updateWax: Wax): Promise<boolean> {
