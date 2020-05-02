@@ -10,5 +10,6 @@ const waxRepo = new WaxRepository();
 const waxService = new WaxService(waxRepo);
 
 export default {
-    userService
+    userService,
+    waxService
 }

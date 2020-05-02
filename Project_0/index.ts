@@ -35,7 +35,7 @@ app.use(sessionMiddleware);
 app.use(corsFilter);
 app.use('/', express.json());
 app.use('/users', UserRouter);
-// app.use('/posts', PostRouter);
+app.use('/waxes', WaxRouter);
 app.use('/auth', AuthRouter);
 
 app.listen(8080, () => {
