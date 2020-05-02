@@ -104,16 +104,16 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
 
             // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select id from user_roles where name = $1', [newUser.role])).rows[0].id;
+            let roleId = (await client.query('select id from user_roles where name = $1', [newUser.userRole])).rows[0].id;
             
             let sql = `
                 insert into app_users (username, first_name, last_name, role_id) 
                 values ($1, $2, $3, $4) returning id
             `;
 
-            let rs = await client.query(sql, [newUser.username, newUser.firstName, newUser.lastName, roleId]);
+            let rs = await client.query(sql, [newUser.username, newUser.first, newUser.last, roleId]);
             
-            newUser.id = rs.rows[0].id;
+            newUser.userID = rs.rows[0].id;
             
             return newUser;
 
