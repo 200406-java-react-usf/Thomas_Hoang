@@ -43,5 +43,36 @@ export class WaxService {
         return wax
     }
 
-    
+    async getWaxByUniqueKey(queryObj: any): Promise<Wax> {
+
+        try{
+
+            let queryKeys = Object.keys(queryObj);
+
+            if (!queryKeys.every(key => isPropertyOf(key, Wax))) {
+                throw new BadRequestError();
+            }
+
+            let key = queryKeys[0];
+            let val = queryObj[key];
+
+            if (key === 'id') {
+                return await this.getWaxByID(+val)
+            }
+
+            if (!isValidStrings(val)) {
+                throw new BadRequestError();
+            }
+
+            let wax = await this.waxRepo.getWaxByUniqueKey(key, val);
+
+            if (isEmptyObject(wax)) {
+                throw new ResourceNotFoundError();
+            }
+
+            return wax
+        } catch (e) {
+            throw e;
+        }
+    }    
 }
