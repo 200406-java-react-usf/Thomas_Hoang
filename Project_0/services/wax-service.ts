@@ -43,4 +43,5 @@ export class WaxService {
         return wax
     }
 
+    
 }
