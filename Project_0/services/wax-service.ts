@@ -34,7 +34,7 @@ export class WaxService {
             throw new BadRequestError();
         }
 
-        let wax = await this.waxRepo.getByID(id);
+        let wax = await this.waxRepo.getById(id);
 
         if (isEmptyObject(wax)) {
             throw new ResourceNotFoundError();
@@ -74,5 +74,50 @@ export class WaxService {
         } catch (e) {
             throw e;
         }
-    }    
+    }
+    
+    asyn addNewWax(newWax: Wax): Promise<Wax> {
+
+        try {
+
+            if (!isValidObject(newWax, 'id')) {
+                throw new BadRequestError('Invalid property values found in provided wax.')
+            }
+
+            let waxAvailable = await this.isWaxAddedYet(newWax.productName);
+
+            if (!waxAvailable) {
+                throw new ResourcePersistenceError('The provided wax is already in the database.');
+            }
+
+            const persistedWax = await this.waxRepo.save(newWax);
+
+            return persistedWax;
+        } catch (e){
+            throw e
+        }
+    }
+
+    async updateWax(updatedWax: Wax) : Promise<boolean> {
+
+        try {
+
+            if (!isValidObject(updatedWax)){
+                throw new BadRequestError('Invalid wax provided (invalid values found).');
+            }
+
+            return await this.waxRepo.update(updatedWax);
+        }catch (e) {
+            throw e;
+        }
+    }
+
+    async deleteByID(id: number): Promise<boolean> {
+        
+        try{
+            throw new NotImplementedError
+        }catch (e) {
+            throw e;
+        }
+    }
 }
