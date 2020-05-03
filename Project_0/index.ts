@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import path from 'path';
 
 import { UserRouter } from './routers/user-router';
-// import { PostRouter } from './routers/post-router';
+import { WaxRouter } from './routers/wax-router';
 import { AuthRouter } from './routers/auth-router';
 import { sessionMiddleware } from './middleware/session-middleware';
 import { corsFilter } from './middleware/cors-filter';
