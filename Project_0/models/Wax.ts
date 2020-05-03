@@ -9,13 +9,13 @@ export class Wax{
     scentStrength: number;
     scentDescription: string;
 
-    constructor(id:number, brand: string, name: string, price: number, limited: boolean,scentCategory: string, scentStrength?: number, description?: string){
+    constructor(id:number, name: string, brand: string, scentCategory: string ,price: number, limited: boolean, scentStrength?: number, description?: string){
         this.productID = id;
-        this.brand = brand;
         this.productName = name;
+        this.brand = brand;
+        this.scentCategory = scentCategory;
         this.productPrice = price;
         this.limitedEdition = limited;
-        this.scentCategory = scentCategory;
         this.scentStrength = scentStrength;
         this.scentDescription = description;
     }

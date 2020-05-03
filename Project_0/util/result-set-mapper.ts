@@ -27,11 +27,11 @@ export function mapWaxResultSet(resultSet: WaxSchema): Wax{
     
     return new Wax(
         resultSet.id,
-        resultSet.brand_name,
         resultSet.product_name,
+        resultSet.brand_name,
+        resultSet.scent_category,
         resultSet.product_price,
         resultSet.limited_edition,
-        resultSet.scent_category,
         resultSet.scent_strength,
         resultSet.scent_description
     );
