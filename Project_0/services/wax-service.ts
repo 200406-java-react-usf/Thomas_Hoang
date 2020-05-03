@@ -76,15 +76,15 @@ export class WaxService {
         }
     }
     
-    asyn addNewWax(newWax: Wax): Promise<Wax> {
+    async addNewWax(newWax: Wax): Promise<Wax> {
 
         try {
 
             if (!isValidObject(newWax, 'id')) {
-                throw new BadRequestError('Invalid property values found in provided wax.')
+                throw new BadRequestError('Invalid property values found in provided wax.');
             }
 
-            let waxAvailable = await this.isWaxAddedYet(newWax.productName);
+            let waxAvailable = await this.isWaxAddedYet(newWax.productName, newWax.brandID);
 
             if (!waxAvailable) {
                 throw new ResourcePersistenceError('The provided wax is already in the database.');
@@ -115,9 +115,25 @@ export class WaxService {
     async deleteByID(id: number): Promise<boolean> {
         
         try{
-            throw new NotImplementedError
+            if (!isValidId(id))
+            throw new BadRequestError();
+
+            return await this.waxRepo.deleteById(id);
         }catch (e) {
             throw e;
         }
+    }
+
+    private async isWaxAddedYet(productName: string, brandID: number): Promise<boolean>{
+
+        try {
+            await this.getWaxByUniqueKey({'product_name': productName}) && this.getWaxByUniqueKey({'product_name': productName})
+        }catch (e) {
+            console.log('Wax is not added yet.')
+            return true;
+        }
+
+        console.log('Wax is added already.')
+        return false;
     }
 }

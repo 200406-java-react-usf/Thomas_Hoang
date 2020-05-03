@@ -46,7 +46,6 @@ export class UserService {
 
     async getUserByUniqueKey(queryObj: any): Promise<User> {
 
-        // we need to wrap this up in a try/catch in case errors are thrown for our awaits
         try {
 
             let queryKeys = Object.keys(queryObj);
