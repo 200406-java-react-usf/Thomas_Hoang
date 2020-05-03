@@ -107,7 +107,7 @@ export class UserRepository implements CrudRepository<User> {
             
             let sql = `
                 insert into users (username, user_password, first_name, last_name, user_role) 
-                values ($1, $2, $3, $4, $5)
+                values ($1, $2, $3, $4, $5) returning id
             `;
 
             let rs = await client.query(sql, [newUser.username,  newUser.password, newUser.first, newUser.last, roleId]);
