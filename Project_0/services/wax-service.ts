@@ -6,6 +6,7 @@ import {
     ResourceNotFoundError,
     ResourcePersistenceError
 } from "../errors/errors";
+import { Brand } from "../models/Brand";
 
 export class WaxService {
     constructor(private waxRepo: WaxRepository) {
@@ -89,9 +90,9 @@ export class WaxService {
             throw e;
         }
     }
-    private async isWaxAddedYet(productName: string, brandID: number): Promise<boolean> {
+    private async isWaxAddedYet(productName: string, brand: string): Promise<boolean> {
         try {
-            await this.getWaxByUniqueKey({ 'product_name': productName }) && this.getWaxByUniqueKey({ 'product_name': productName });
+            await this.getWaxByUniqueKey({ 'product_name': productName }) && this.getWaxByUniqueKey({ 'brand_name': brand });
         }
         catch (e) {
             console.log('Wax is not added yet.');
