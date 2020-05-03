@@ -58,7 +58,7 @@ export class WaxService {
             if (!isValidObject(newWax, 'id')) {
                 throw new BadRequestError('Invalid property values found in provided wax.');
             }
-            let waxAvailable = await this.isWaxAddedYet(newWax.productName, newWax.brandID);
+            let waxAvailable = await this.isWaxAddedYet(newWax.productName, newWax.brand);
             if (!waxAvailable) {
                 throw new ResourcePersistenceError('The provided wax is already in the database.');
             }
