@@ -39,13 +39,39 @@ BrandRouter.get('/:id', async (req, resp) => {
     }
 });
 
-BrandRouter.post('', async (req, resp) => {
+BrandRouter.post('', adminGuard, async (req, resp) => {
 
     console.log('POST REQUEST RECEIVED AT /brands');
     console.log(req.body);
     try {
         let newUser = await brandService.addNewBrand(req.body);
         return resp.status(201).json(newUser);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+
+});
+
+BrandRouter.put('', adminGuard, async (req, resp) => {
+
+    console.log('PUT REQUEST RECEIVED AT /brands');
+    console.log(req.body);
+    try {
+        let updatedUser = await brandService.updateBrand(req.body);
+        return resp.status(201).json(updatedUser);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+
+});
+
+BrandRouter.delete('', adminGuard, async (req, resp) => {
+
+    console.log('DELETE REQUEST RECEIVED AT /brands');
+    console.log(req.body);
+    try {
+        let deletedUser = await brandService.deleteById(req.body);
+        return resp.status(201).json(deletedUser);
     } catch (e) {
         return resp.status(e.statusCode).json(e);
     }

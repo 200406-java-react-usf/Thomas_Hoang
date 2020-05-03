@@ -40,7 +40,7 @@ WaxRouter.get('/:id', async (req, resp) => {
 
 WaxRouter.post('', adminGuard, async (req, resp) => {
     
-    console.log('POST REQUEST RECEIVED AT /users');
+    console.log('POST REQUEST RECEIVED AT /waxes');
     console.log(req.body);
     try {
         let updatedUser = await waxService.addNewWax(req.body);
@@ -51,7 +51,7 @@ WaxRouter.post('', adminGuard, async (req, resp) => {
 });
 WaxRouter.put('', adminGuard, async (req, resp) => {
 
-    console.log('PUT REQUEST RECEIVED AT /users');
+    console.log('PUT REQUEST RECEIVED AT /waxes');
     console.log(req.body);
     try {
         let updatedUser = await waxService.updateWax(req.body);
@@ -62,7 +62,7 @@ WaxRouter.put('', adminGuard, async (req, resp) => {
 });
 WaxRouter.delete('', adminGuard, async (req, resp) => {
 
-    console.log('DELETE REQUEST RECEIVED AT /users');
+    console.log('DELETE REQUEST RECEIVED AT /waxes');
     console.log(req.body);
     try {
         let updatedUser = await waxService.deleteByID(req.body);
