@@ -18,6 +18,19 @@ export interface WaxSchema {
     description: string
 }
 
+export interface OwnedSchema {
+    id: number,
+    product_name: string,
+    brand_name: string,
+    category:string,
+    price: number,
+    limited_edition: boolean,
+    quantity: number,
+    personal_rating: number,
+    strength: number,
+    description: string
+}
+
 export interface BrandSchema {
     id: number,
     brand_name: string

@@ -4,6 +4,8 @@ import { WaxSchema } from "./schemas";
 import { Wax } from "../models/wax";
 import { BrandSchema } from "./schemas";
 import { Brand } from "../models/brand";
+import { OwnedSchema } from "./schemas";
+import { Owned } from "../models/owned";
 
 export function mapUserResultSet(resultSet: UserSchema): User {
     
@@ -39,19 +41,21 @@ export function mapWaxResultSet(resultSet: WaxSchema): Wax{
     );
 }
 
-export function mapOwnedResultSet(resultSet: WaxSchema): Wax{
+export function mapOwnedResultSet(resultSet: OwnedSchema): Owned{
 
     if (!resultSet) {
-        return {} as Wax;
+        return {} as Owned;
     }
     
-    return new Wax(
+    return new Owned(
         resultSet.id,
         resultSet.product_name,
         resultSet.brand_name,
         resultSet.category,
         resultSet.price,
         resultSet.limited_edition,
+        resultSet.quantity,
+        resultSet.personal_rating,
         resultSet.strength,
         resultSet.description
     );
