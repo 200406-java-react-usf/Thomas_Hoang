@@ -6,7 +6,7 @@ import { ParsedUrlQuery } from 'querystring';
 
 export const OwnedRouter = express.Router();
 
-const ownedService = AppConfig.waxService;
+const ownedService = AppConfig.ownedService;
 
 OwnedRouter.get('/', async (req, resp) => {
     

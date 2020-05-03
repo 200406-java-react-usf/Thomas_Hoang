@@ -6,7 +6,6 @@ import {
     ResourceNotFoundError,
     ResourcePersistenceError
 } from "../errors/errors";
-import { Brand } from "../models/Brand";
 
 export class WaxService {
     constructor(private waxRepo: WaxRepository) {
