@@ -4,12 +4,8 @@ import { isValidId, isValidStrings, isValidObject, isPropertyOf, isEmptyObject }
 import {
     BadRequestError,
     ResourceNotFoundError,
-    NotImplementedError,
-    ResourcePersistenceError, 
-    AuthenticationError
+    ResourcePersistenceError
 } from "../errors/errors";
-import { UserService } from "./user-service";
-
 
 export class WaxService {
 
