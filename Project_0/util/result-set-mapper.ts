@@ -36,3 +36,21 @@ export function mapWaxResultSet(resultSet: WaxSchema): Wax{
         resultSet.description
     );
 }
+
+export function mapOwnedResultSet(resultSet: WaxSchema): Wax{
+
+    if (!resultSet) {
+        return {} as Wax;
+    }
+    
+    return new Wax(
+        resultSet.id,
+        resultSet.product_name,
+        resultSet.brand_name,
+        resultSet.category,
+        resultSet.price,
+        resultSet.limited_edition,
+        resultSet.strength,
+        resultSet.description
+    );
+}
