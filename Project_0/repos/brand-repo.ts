@@ -54,7 +54,7 @@ export class BrandRepository implements CrudRepository<Brand> {
 
     }
 
-    async getUserByUniqueKey(key: string, val: string): Promise<Brand> {
+    async getBrandByUniqueKey(key: string, val: string): Promise<Brand> {
 
         let client: PoolClient;
 
