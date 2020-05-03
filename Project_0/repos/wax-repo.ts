@@ -91,7 +91,6 @@ export class WaxRepository implements CrudRepository<Wax> {
 
                 let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
                 newWax.productID = rs.rows[0].id;
-
                 return newWax;
             }else if (newWax.scentStrength != undefined){
                 let sql = `
@@ -101,7 +100,6 @@ export class WaxRepository implements CrudRepository<Wax> {
             
                 let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength]);
                 newWax.productID = rs.rows[0].id;
-                
                 return newWax;
             }else if (newWax.scentDescription != undefined){
                 let sql = `
@@ -111,17 +109,15 @@ export class WaxRepository implements CrudRepository<Wax> {
             
                 let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentDescription]);
                 newWax.productID = rs.rows[0].id;
-                
                 return newWax;
             }else if (newWax.scentStrength == undefined && newWax.scentDescription == undefined){
                 let sql = `
                     insert into waxes (product_name, brand_id, price, limited edition, category) 
                     values ($1, $2, $3, $4, $5) returning id
                 `;
-            
+    
                 let rs = await client.query(sql, [newWax.productName , newWax.brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory]);
                 newWax.productID = rs.rows[0].id;
-                
                 return newWax;
             }
         } catch (e) {
@@ -140,30 +136,16 @@ export class WaxRepository implements CrudRepository<Wax> {
             client = await connectionPool.connect();
 
             if (updatedWax.scentStrength != undefined && updatedWax.scentDescription != undefined){
-                let sql = `
-                    update waxes set strength = $2, description = $3 where id = $1;
-                `;
-
+                let sql = `update waxes set strength = $2, description = $3 where id = $1;`;
                 let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength, updatedWax.scentDescription]);
-
                 return true;
             }else if (updatedWax.scentStrength != undefined){
-                let sql = `
-                    update waxes set strength = $2 where id = $1;
-                `;
-            
+                let sql = `update waxes set strength = $2 where id = $1;`;
                 let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength]);
-                updatedWax.productID = rs.rows[0].id;
-                
                 return true;
             }else if (updatedWax.scentDescription != undefined){
-                let sql = `
-                    update waxes set description = $2 where id = $1;
-                `;
-            
+                let sql = `update waxes set description = $2 where id = $1;`;
                 let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentDescription]);
-                updatedWax.productID = rs.rows[0].id;
-                
                 return true;
             }
         }catch (e) {
@@ -173,15 +155,13 @@ export class WaxRepository implements CrudRepository<Wax> {
         }
     }
 
-    //Need to think of SQL statement for this
     async deleteById(id: number): Promise<boolean> {
 
         let client: PoolClient;
 
         try {
-            client = await connectionPool.connect();
-            let sql = ``;
-            let rs = await client.query(sql, []);
+            let sql = ` delete from waxes where id = $1;`;
+            let rs = await client.query(sql, [id]);  
             return true;
         }catch (e) {
             throw new InternalServerError();
