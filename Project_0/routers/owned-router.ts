@@ -3,6 +3,7 @@ import express from 'express';
 import AppConfig from '../config/app';
 import { isEmptyObject } from '../util/validator';
 import { ParsedUrlQuery } from 'querystring';
+import { adminGuard } from '../middleware/auth-middleware';
 
 export const OwnedRouter = express.Router();
 
@@ -34,4 +35,43 @@ OwnedRouter.get('/:id', async (req, resp) => {
     } catch (e) {
         return resp.status(404).json(e).send();
     }
+});
+
+OwnedRouter.post('', async (req, resp) => {
+
+    console.log('POST REQUEST RECEIVED AT /owned');
+    console.log(req.body);
+    try {
+        let newUser = await ownedService.addNewWax(req.body);
+        return resp.status(201).json(newUser);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+
+});
+
+OwnedRouter.put('', async (req, resp) => {
+
+    console.log('PUT REQUEST RECEIVED AT /owned');
+    console.log(req.body);
+    try {
+        let updatedUser = await ownedService.updateWax(req.body);
+        return resp.status(201).json(updatedUser);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+
+});
+
+OwnedRouter.delete('', async (req, resp) => {
+
+    console.log('DELETE REQUEST RECEIVED AT /owned');
+    console.log(req.body);
+    try {
+        let deletedUser = await ownedService.deleteByID(req.body);
+        return resp.status(201).json(deletedUser);
+    } catch (e) {
+        return resp.status(e.statusCode).json(e);
+    }
+
 });
