@@ -48,7 +48,8 @@ export function mapOwnedResultSet(resultSet: OwnedSchema): Owned{
     }
     
     return new Owned(
-        resultSet.id,
+        resultSet.user_id,
+        resultSet.wax_id,
         resultSet.product_name,
         resultSet.brand_name,
         resultSet.category,

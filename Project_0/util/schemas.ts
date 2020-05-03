@@ -19,7 +19,7 @@ export interface WaxSchema {
 }
 
 export interface OwnedSchema {
-    id: number,
+    wax_id: number,
     product_name: string,
     brand_name: string,
     category:string,

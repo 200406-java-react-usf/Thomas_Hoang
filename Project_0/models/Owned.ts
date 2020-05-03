@@ -1,5 +1,6 @@
 export class Owned{
 
+    userID: number;
     productID:number;
     brand: string;
     productName: string;
@@ -10,8 +11,9 @@ export class Owned{
     personalRating: number;
     scentStrength: number;
     scentDescription: string;
-    constructor(id:number, name: string, brand: string, scentCategory: string,price: number, limited: boolean, quantity: number, personalRating?: number, scentStrength?: number , description?: string){
-        this.productID = id;
+    constructor(userID: number, productID:number, name: string, brand: string, scentCategory: string,price: number, limited: boolean, quantity: number, personalRating?: number, scentStrength?: number , description?: string){
+        this.userID = userID;
+        this.productID = productID;
         this.productName = name;
         this.brand = brand;
         this.scentCategory = scentCategory;

@@ -15,20 +15,25 @@ export class OwnedRepository implements CrudRepository<Owned> {
     
     baseQuery = `
         select
+            u.id ,
             w.id,
             w.product_name,
             b.brand_name as brand_name,
             w.category,
             w.price,
             w.limited_edition,
+            wo.quantity,
+            wo.personal_rating,
             w.strength,
             w.description
-        from waxes w
-        join brands b
+        from wax_owners wo
+        full outer join brands b
         on w.brand_id = b.id
+        join users u
+        on wo.user_id = u.id
     `;
 
-    async getAll(): Promise<Wax[]> {
+    async getAll(): Promise<Owned[]> {
 
         let client: PoolClient;
 
@@ -36,7 +41,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery}`;
             let rs = await client.query(sql);
-            return rs.rows.map(mapWaxResultSet);
+            return rs.rows.map(mapOwnedResultSet);
         }catch (e) {
             throw new InternalServerError();
         }finally {
@@ -44,7 +49,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
         }
     }
 
-    async getById(id: number): Promise<Wax> {
+    async getById(id: number): Promise<Owned> {
 
         let client: PoolClient;
 
@@ -52,7 +57,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} where w.id = $1`;
             let rs = await client.query(sql, [id]);
-            return mapWaxResultSet(rs.rows[0])
+            return mapOwnedResultSet(rs.rows[0])
         }catch (e) {
             throw new InternalServerError();
         }finally {
@@ -60,7 +65,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
         }
     }
 
-    async getWaxByUniqueKey(key: string, val: string): Promise<Wax> {
+    async getWaxByUniqueKey(key: string, val: string): Promise<Owned> {
 
         let client: PoolClient;
 
@@ -68,7 +73,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} where u.${key} = $1`;
             let rs = await client.query(sql, [val]);
-            return mapWaxResultSet(rs.rows[0]);
+            return mapOwnedResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
         } finally {
@@ -76,7 +81,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
         }
     }
 
-    async save(newWax: Wax): Promise<Wax> {
+    async save(newWax: Owned): Promise<Owned> {
             
         let client: PoolClient;
 
@@ -128,7 +133,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
         }
     }
 
-    async update(updatedWax: Wax): Promise<boolean> {
+    async update(updatedWax: Owned): Promise<boolean> {
 
         let client: PoolClient;
 
@@ -155,13 +160,14 @@ export class OwnedRepository implements CrudRepository<Owned> {
         }
     }
 
-    async deleteById(id: number): Promise<boolean> {
+    async deleteById(productID: number): Promise<boolean> {
 
         let client: PoolClient;
 
         try {
-            let sql = `delete from waxes where id = $1;`;
-            let rs = await client.query(sql, [id]);  
+            let userID = (await client.query('select id from users where id = $1', [user.userID])).rows[0].id;
+            let sql = `delete from wax_owners where user_id = $1 and product_id = $2;`;
+            let rs = await client.query(sql, [userID, productID]);  
             return true;
         }catch (e) {
             throw new InternalServerError();
