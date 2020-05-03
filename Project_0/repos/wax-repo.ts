@@ -76,7 +76,6 @@ export class WaxRepository implements CrudRepository<Wax> {
         }
     }
 
-    // Need to come back to this because of special circumstances of saving waxes.
     async save(newWax: Wax): Promise<Wax> {
             
         let client: PoolClient;
@@ -114,7 +113,7 @@ export class WaxRepository implements CrudRepository<Wax> {
                 newWax.productID = rs.rows[0].id;
                 
                 return newWax;
-            }else{
+            }else if (newWax.scentStrength == undefined && newWax.scentDescription == undefined){
                 let sql = `
                     insert into waxes (product_name, brand_id, price, limited edition, category) 
                     values ($1, $2, $3, $4, $5) returning id
@@ -133,7 +132,6 @@ export class WaxRepository implements CrudRepository<Wax> {
         }
     }
 
-    //Need to think of SQL statement for this
     async update(updatedWax: Wax): Promise<boolean> {
 
         let client: PoolClient;
@@ -141,10 +139,33 @@ export class WaxRepository implements CrudRepository<Wax> {
         try {
             client = await connectionPool.connect();
 
-            //If 
-                let sql = ``;
-            let rs = await client.query(sql, []);
-            return true;
+            if (updatedWax.scentStrength != undefined && updatedWax.scentDescription != undefined){
+                let sql = `
+                    update waxes set strength = $2, description = $3 where id = $1;
+                `;
+
+                let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength, updatedWax.scentDescription]);
+
+                return true;
+            }else if (updatedWax.scentStrength != undefined){
+                let sql = `
+                    update waxes set strength = $2 where id = $1;
+                `;
+            
+                let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength]);
+                updatedWax.productID = rs.rows[0].id;
+                
+                return true;
+            }else if (updatedWax.scentDescription != undefined){
+                let sql = `
+                    update waxes set description = $2 where id = $1;
+                `;
+            
+                let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentDescription]);
+                updatedWax.productID = rs.rows[0].id;
+                
+                return true;
+            }
         }catch (e) {
             throw new InternalServerError();
         }finally {
