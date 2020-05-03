@@ -15,18 +15,25 @@ export class WaxRepository implements CrudRepository<Wax> {
     
     baseQuery = `
         select
-            w.id,
-            w.product_name,
-            b.brand_name as brand_name,
-            w.category,
-            w.price,
-            w.limited_edition,
-            w.strength,
-            w.description
-        from waxes w
-        join brands b
+	        u.id as user_id,
+	        w.id as wax_id,
+	        w.product_name,
+	        b.brand_name as brand_name,
+	        w.category,
+	        w.price,
+	        w.limited_edition,
+	        wo.quantity,
+	        wo.personal_rating,
+	        w.strength,
+	        w.description
+        from wax_owners wo
+        full outer join users u
+        on wo.user_id = u.id
+        full outer join waxes w
+        on wo.product_id = w.id
+        full outer join brands b
         on w.brand_id = b.id
-    `;
+        `;
 
     async getAll(): Promise<Wax[]> {
 
