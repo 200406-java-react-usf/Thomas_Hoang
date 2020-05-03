@@ -1,4 +1,4 @@
-import { User } from '../models/user';
+import { Brand } from '../models/brand';
 import { CrudRepository } from './crud-repo';
 import {
     NotImplementedError, 
@@ -8,24 +8,18 @@ import {
 } from '../errors/errors';
 import { PoolClient } from 'pg';
 import { connectionPool } from '..';
-import { mapUserResultSet } from '../util/result-set-mapper';
+import { mapBrandResultSet } from '../util/result-set-mapper';
 
-export class UserRepository implements CrudRepository<User> {
+export class BrandRepository implements CrudRepository<Brand> {
 
     baseQuery = `
         select
-            u.id, 
-            u.username, 
-            u.user_password, 
-            u.first_name,
-            u.last_name,
-            ur.rolename as role_name
-        from users u
-        join user_roles ur
-        on u.user_role = ur.roleid
+            b.id
+            b.brand_name
+        from brands b
     `;
 
-    async getAll(): Promise<User[]> {
+    async getAll(): Promise<Brand[]> {
 
         let client: PoolClient;
 
@@ -33,7 +27,7 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery}`;
             let rs = await client.query(sql); // rs = ResultSet
-            return rs.rows.map(mapUserResultSet);
+            return rs.rows.map(mapBrandResultSet);
         } catch (e) {
             throw new InternalServerError();
         } finally {
@@ -42,7 +36,7 @@ export class UserRepository implements CrudRepository<User> {
     
     }
 
-    async getById(id: number): Promise<User> {
+    async getById(id: number): Promise<Brand> {
 
         let client: PoolClient;
 
@@ -50,7 +44,7 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} where u.id = $1`;
             let rs = await client.query(sql, [id]);
-            return mapUserResultSet(rs.rows[0]);
+            return mapBrandResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
         } finally {
@@ -60,7 +54,7 @@ export class UserRepository implements CrudRepository<User> {
 
     }
 
-    async getUserByUniqueKey(key: string, val: string): Promise<User> {
+    async getUserByUniqueKey(key: string, val: string): Promise<Brand> {
 
         let client: PoolClient;
 
@@ -68,7 +62,7 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} where u.${key} = $1`;
             let rs = await client.query(sql, [val]);
-            return mapUserResultSet(rs.rows[0]);
+            return mapBrandResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
         } finally {
@@ -78,43 +72,23 @@ export class UserRepository implements CrudRepository<User> {
     
     }
 
-    async getUserByCredentials(un: string, pw: string) {
-        
-        let client: PoolClient;
-
-        try {
-            client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where u.username = $1 and u.user_password = $2`;
-            let rs = await client.query(sql, [un, pw]);
-            return mapUserResultSet(rs.rows[0]);
-        } catch (e) {
-            throw new InternalServerError();
-        } finally {
-            client && client.release();
-        }
-    
-    }
-
-    async save(newUser: User): Promise<User> {
+    async save(newBrand: Brand): Promise<Brand> {
             
         let client: PoolClient;
 
         try {
             client = await connectionPool.connect();
-
-            // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select id from user_roles where rolename = $1', [newUser.userRole])).rows[0].id;
             
             let sql = `
-                insert into users (username, first_name, last_name, user_role) 
-                values ($1, $2, $3, $4, $5) returning id
+                insert into brands (brand_name) 
+                values ($1) returning id
             `;
 
-            let rs = await client.query(sql, [newUser.username,  newUser.password, newUser.first, newUser.last, roleId]);
+            let rs = await client.query(sql, [newBrand.brandName]);
             
-            newUser.userID = rs.rows[0].id;
+            newBrand.id = rs.rows[0].id;
             
-            return newUser;
+            return newBrand;
 
         } catch (e) {
             console.log(e);
@@ -125,14 +99,14 @@ export class UserRepository implements CrudRepository<User> {
     
     }
 
-    async update(updatedUser: User): Promise<boolean> {
+    async update(updatedBrand: Brand): Promise<boolean> {
         
         let client: PoolClient;
 
         try {
             client = await connectionPool.connect();
-            let sql = ``;
-            let rs = await client.query(sql, []);
+            let sql = `update brands set brand_name = $2 where id = $1;`;
+            let rs = await client.query(sql, [updatedBrand.id, updatedBrand.brandName]);
             return true;
         } catch (e) {
             throw new InternalServerError();
@@ -148,8 +122,8 @@ export class UserRepository implements CrudRepository<User> {
 
         try {
             client = await connectionPool.connect();
-            let sql = ``;
-            let rs = await client.query(sql, []);
+            let sql = `delete from brands where id = $1;`;
+            let rs = await client.query(sql, [id]);
             return true;
         } catch (e) {
             throw new InternalServerError();
