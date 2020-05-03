@@ -2,6 +2,8 @@ import { UserSchema } from "./schemas";
 import { User } from "../models/user";
 import { WaxSchema } from "./schemas";
 import { Wax } from "../models/wax";
+import { BrandSchema } from "./schemas";
+import { Brand } from "../models/brand";
 
 export function mapUserResultSet(resultSet: UserSchema): User {
     
@@ -52,5 +54,17 @@ export function mapOwnedResultSet(resultSet: WaxSchema): Wax{
         resultSet.limited_edition,
         resultSet.strength,
         resultSet.description
+    );
+}
+
+export function mapBrandResultSet(resultSet: BrandSchema): Brand{
+
+    if (!resultSet) {
+        return {} as Brand;
+    }
+    
+    return new Brand(
+        resultSet.id,
+        resultSet.brand_name,
     );
 }
