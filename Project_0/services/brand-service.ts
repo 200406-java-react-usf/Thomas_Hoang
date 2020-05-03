@@ -1,5 +1,5 @@
-import { User } from "../models/user";
-import { UserRepository } from "../repos/user-repo";
+import { Brand } from "../models/brand";
+import { BrandRepository } from "../repos/brand-repo";
 import { isValidId, isValidStrings, isValidObject, isPropertyOf, isEmptyObject } from "../util/validator";
 import { 
     BadRequestError, 
@@ -10,47 +10,47 @@ import {
 } from "../errors/errors";
 
 
-export class UserService {
+export class BrandService {
 
-    constructor(private userRepo: UserRepository) {
-        this.userRepo = userRepo;
+    constructor(private brandRepo: BrandRepository) {
+        this.brandRepo = brandRepo;
     }
 
-    async getAllUsers(): Promise<User[]> {
+    async getAllBrands(): Promise<Brand[]> {
 
-        let users = await this.userRepo.getAll();
+        let brands = await this.brandRepo.getAll();
 
-        if (users.length == 0) {
+        if (brands.length == 0) {
             throw new ResourceNotFoundError();
         }
 
-        return users.map(this.removePassword);
+        return brands;
 
     }
 
-    async getUserById(id: number): Promise<User> {
+    async getBrandById(id: number): Promise<Brand> {
 
         if (!isValidId(id)) {
             throw new BadRequestError();
         }
 
-        let user = await this.userRepo.getById(id);
+        let brand = await this.brandRepo.getById(id);
 
-        if (isEmptyObject(user)) {
+        if (isEmptyObject(brand)) {
             throw new ResourceNotFoundError();
         }
 
-        return this.removePassword(user);
+        return brand;
 
     }
 
-    async getUserByUniqueKey(queryObj: any): Promise<User> {
+    async getBrandByUniqueKey(queryObj: any): Promise<Brand> {
 
         try {
 
             let queryKeys = Object.keys(queryObj);
 
-            if(!queryKeys.every(key => isPropertyOf(key, User))) {
+            if(!queryKeys.every(key => isPropertyOf(key, Brand))) {
                 throw new BadRequestError();
             }
 
@@ -60,7 +60,7 @@ export class UserService {
 
             // if they are searching for a user by id, reuse the logic we already have
             if (key === 'id') {
-                return await this.getUserById(+val);
+                return await this.getBrandById(+val);
             }
 
             // ensure that the provided key value is valid
@@ -68,62 +68,36 @@ export class UserService {
                 throw new BadRequestError();
             }
 
-            let user = await this.userRepo.getUserByUniqueKey(key, val);
+            let brand = await this.brandRepo.getBrandByUniqueKey(key, val);
 
-            if (isEmptyObject(user)) {
+            if (isEmptyObject(brand)) {
                 throw new ResourceNotFoundError();
             }
 
-            return this.removePassword(user);
+            return brand;
 
         } catch (e) {
             throw e;
         }
     }
 
-    async authenticateUser(un: string, pw: string): Promise<User> {
-
-        try {
-
-            if (!isValidStrings(un, pw)) {
-                throw new BadRequestError();
-            }
-
-            let authUser: User;
-            
-            authUser = await this.userRepo.getUserByCredentials(un, pw);
-           
-
-            if (isEmptyObject(authUser)) {
-                throw new AuthenticationError('Bad credentials provided.');
-            }
-
-            return this.removePassword(authUser);
-
-        } catch (e) {
-            throw e;
-        }
-
-    }
-
-    async addNewUser(newUser: User): Promise<User> {
+    async addNewBrand(newBrand: Brand): Promise<Brand> {
         
         try {
 
-            if (!isValidObject(newUser, 'id')) {
+            if (!isValidObject(newBrand, 'id')) {
                 throw new BadRequestError('Invalid property values found in provided user.');
             }
 
-            let usernameAvailable = await this.isUsernameAvailable(newUser.username);
+            let brandAddedYet = await this.isBrandAddedYet(newBrand.brandName);
 
-            if (!usernameAvailable) {
+            if (!brandAddedYet) {
                 throw new ResourcePersistenceError('The provided username is already taken.');
             }
 
-            newUser.userRole = 'User'; // all new registers have 'User' role by default
-            const persistedUser = await this.userRepo.save(newUser);
+            const persistedBrand = await this.brandRepo.save(newBrand);
 
-            return this.removePassword(persistedUser);
+            return persistedBrand;
 
         } catch (e) {
             throw e
@@ -131,16 +105,16 @@ export class UserService {
 
     }
 
-    async updateUser(updatedUser: User): Promise<boolean> {
+    async updateBrand(updatedBrand: Brand): Promise<boolean> {
         
         try {
 
-            if (!isValidObject(updatedUser)) {
+            if (!isValidObject(updatedBrand)) {
                 throw new BadRequestError('Invalid user provided (invalid values found).');
             }
 
             // let repo handle some of the other checking since we are still mocking db
-            return await this.userRepo.update(updatedUser);
+            return await this.brandRepo.update(updatedBrand);
         } catch (e) {
             throw e;
         }
@@ -157,38 +131,17 @@ export class UserService {
 
     }
 
-    private async isUsernameAvailable(username: string): Promise<boolean> {
+    private async isBrandAddedYet(brandName: string): Promise<boolean> {
 
         try {
-            await this.getUserByUniqueKey({'username': username});
+            await this.getBrandByUniqueKey({'brand_name': brandName});
         } catch (e) {
-            console.log('username is available')
+            console.log('Brand is not added yet.')
             return true;
         }
 
-        console.log('username is unavailable')
+        console.log('Brand is already in the database.')
         return false;
 
     }
-
-    private async isEmailAvailable(email: string): Promise<boolean> {
-        
-        try {
-            await this.getUserByUniqueKey({'email': email});
-        } catch (e) {
-            console.log('email is available')
-            return true;
-        }
-
-        console.log('email is unavailable')
-        return false;
-    }
-
-    private removePassword(user: User): User {
-        if(!user || !user.password) return user;
-        let usr = {...user};
-        delete usr.password;
-        return usr;   
-    }
-
 }
