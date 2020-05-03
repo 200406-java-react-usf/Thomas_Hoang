@@ -171,19 +171,6 @@ export class UserService {
 
     }
 
-    private async isEmailAvailable(email: string): Promise<boolean> {
-        
-        try {
-            await this.getUserByUniqueKey({'email': email});
-        } catch (e) {
-            console.log('email is available')
-            return true;
-        }
-
-        console.log('email is unavailable')
-        return false;
-    }
-
     private removePassword(user: User): User {
         if(!user || !user.password) return user;
         let usr = {...user};
