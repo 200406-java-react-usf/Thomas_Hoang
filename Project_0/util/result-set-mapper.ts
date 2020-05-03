@@ -27,7 +27,7 @@ export function mapWaxResultSet(resultSet: WaxSchema): Wax{
     
     return new Wax(
         resultSet.id,
-        resultSet.brand_id,
+        resultSet.brand_name,
         resultSet.product_name,
         resultSet.product_price,
         resultSet.limited_edition,

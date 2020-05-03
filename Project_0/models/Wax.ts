@@ -1,7 +1,7 @@
 export class Wax{
 
     productID:number;
-    brandID: number;
+    brand: string;
     productName: string;
     productPrice: number;
     limitedEdition: boolean;
@@ -9,9 +9,9 @@ export class Wax{
     scentStrength: number;
     scentDescription: string;
 
-    constructor(id:number, brandID: number, name: string, price: number, limited: boolean,scentCategory: string, scentStrength?: number, description?: string){
+    constructor(id:number, brand: string, name: string, price: number, limited: boolean,scentCategory: string, scentStrength?: number, description?: string){
         this.productID = id;
-        this.brandID = brandID;
+        this.brand = brand;
         this.productName = name;
         this.productPrice = price;
         this.limitedEdition = limited;
