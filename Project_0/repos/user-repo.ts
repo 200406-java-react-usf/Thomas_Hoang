@@ -106,7 +106,7 @@ export class UserRepository implements CrudRepository<User> {
             let roleId = (await client.query('select id from user_roles where rolename = $1', [newUser.userRole])).rows[0].id;
             
             let sql = `
-                insert into users (username, first_name, last_name, user_role) 
+                insert into users (username, user_password, first_name, last_name, user_role) 
                 values ($1, $2, $3, $4, $5) returning id
             `;
 
@@ -118,7 +118,7 @@ export class UserRepository implements CrudRepository<User> {
 
         } catch (e) {
             console.log(e);
-            throw new InternalServerError();
+            throw new InternalServerError('Something went wrong');
         } finally {
             client && client.release();
         }
