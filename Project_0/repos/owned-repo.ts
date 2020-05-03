@@ -15,22 +15,24 @@ export class OwnedRepository implements CrudRepository<Owned> {
     
     baseQuery = `
         select
-            u.id ,
-            w.id,
-            w.product_name,
-            b.brand_name as brand_name,
-            w.category,
-            w.price,
-            w.limited_edition,
-            wo.quantity,
-            wo.personal_rating,
-            w.strength,
-            w.description
+	        u.id as user_id,
+	        w.id as wax_id,
+	        w.product_name,
+	        b.brand_name as brand_name,
+	        w.category,
+	        w.price,
+	        w.limited_edition,
+	        wo.quantity,
+	        wo.personal_rating,
+	        w.strength,
+	        w.description
         from wax_owners wo
-        full outer join brands b
-        on w.brand_id = b.id
-        join users u
+        full outer join users u
         on wo.user_id = u.id
+        full outer join waxes w
+        on wo.product_id = w.id
+        inner join brands b
+        on w.brand_id = b.id
     `;
 
     async getAll(): Promise<Owned[]> {
