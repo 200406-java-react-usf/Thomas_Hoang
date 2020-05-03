@@ -103,7 +103,7 @@ export class UserRepository implements CrudRepository<User> {
             client = await connectionPool.connect();
 
             // WIP: hacky fix since we need to make two DB calls
-            let roleId = (await client.query('select id from user_roles where rolename = $1', [newUser.userRole])).rows[0].id;
+            let roleId = (await client.query('select roleid from user_roles where rolename = $1', [newUser.userRole])).rows[0].id;
             
             let sql = `
                 insert into users (username, user_password, first_name, last_name, user_role) 
@@ -118,7 +118,7 @@ export class UserRepository implements CrudRepository<User> {
 
         } catch (e) {
             console.log(e);
-            throw new InternalServerError('Something went wrong');
+            throw new InternalServerError();
         } finally {
             client && client.release();
         }

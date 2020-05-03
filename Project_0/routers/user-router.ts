@@ -29,7 +29,7 @@ UserRouter.get('', adminGuard, async (req, resp) => {
 
 });
 
-UserRouter.get('/:id', async (req, resp) => {
+UserRouter.get('/:id', adminGuard, async (req, resp) => {
     const id = +req.params.id;
     try {
         let payload = await userService.getUserById(id);
@@ -39,7 +39,7 @@ UserRouter.get('/:id', async (req, resp) => {
     }
 });
 
-UserRouter.post('', async (req, resp) => {
+UserRouter.post('', adminGuard, async (req, resp) => {
 
     console.log('POST REQUEST RECEIVED AT /users');
     console.log(req.body);
@@ -52,7 +52,7 @@ UserRouter.post('', async (req, resp) => {
 
 });
 
-UserRouter.put('/update', async (req, resp) => {
+UserRouter.put('', adminGuard, async (req, resp) => {
 
     console.log('PUT REQUEST RECEIVED AT /users');
     console.log(req.body);
@@ -65,7 +65,7 @@ UserRouter.put('/update', async (req, resp) => {
 
 });
 
-UserRouter.delete('/delete', async (req, resp) => {
+UserRouter.delete('', adminGuard, async (req, resp) => {
 
     console.log('DELETE REQUEST RECEIVED AT /users');
     console.log(req.body);
