@@ -25,7 +25,7 @@ WaxRouter.get('/', async (req, resp) => {
     } catch (e) {
         resp.status(e.statusCode).json(e);
     }
-
+});
 WaxRouter.get('/:id', async (req, resp) => {
     const id = +req.params.id; // the plus sign is to type coerce id into a number
     try {
