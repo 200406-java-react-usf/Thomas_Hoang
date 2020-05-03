@@ -107,12 +107,12 @@ export class UserRepository implements CrudRepository<User> {
             
             let sql = `
                 insert into users (username, user_password, first_name, last_name, user_role) 
-                values ($1, $2, $3, $4, $5) returning id
+                values ($1, $2, $3, $4, $5)
             `;
 
             let rs = await client.query(sql, [newUser.username,  newUser.password, newUser.first, newUser.last, roleId]);
             
-            newUser.userID = rs.rows[0].id;
+            newUser.id = rs.rows[0].id;
             
             return newUser;
 
@@ -133,7 +133,7 @@ export class UserRepository implements CrudRepository<User> {
         try {
             client = await connectionPool.connect();
             let sql = `update users set username = $2 where id = $1;`;
-            let rs = await client.query(sql, [updatedUser.userID, updatedUser.username]);
+            let rs = await client.query(sql, [updatedUser.id, updatedUser.username]);
             return true;
         } catch (e) {
             throw new InternalServerError();
