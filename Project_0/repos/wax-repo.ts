@@ -25,7 +25,8 @@ export class WaxRepository implements CrudRepository<Wax> {
             w.description
         from waxes w
         join brands b
-        `;
+        on w.brand_id = b.id
+    `;
 
     async getAll(): Promise<Wax[]> {
 

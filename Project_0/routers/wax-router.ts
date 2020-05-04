@@ -9,7 +9,7 @@ export const WaxRouter = express.Router();
 
 const waxService = AppConfig.waxService;
 
-WaxRouter.get('/', async (req, resp) => {
+WaxRouter.get('', async (req, resp) => {
     
     try {
 
