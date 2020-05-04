@@ -118,7 +118,7 @@ export class UserRepository implements CrudRepository<User> {
 
         } catch (e) {
             console.log(e);
-            throw new InternalServerError();
+            throw new InternalServerError('Save error');
         } finally {
             client && client.release();
         }

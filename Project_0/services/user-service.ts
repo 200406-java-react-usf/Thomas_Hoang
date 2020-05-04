@@ -168,7 +168,6 @@ export class UserService {
 
         console.log('username is unavailable')
         return false;
-
     }
 
     private removePassword(user: User): User {
