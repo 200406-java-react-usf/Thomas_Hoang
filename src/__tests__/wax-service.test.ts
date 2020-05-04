@@ -1,33 +1,33 @@
-import { UserService } from '../services/user-service';
-import { UserRepository } from '../repos/user-repo';
-import { User } from '../models/user';
+import { WaxService } from '../services/wax-service';
+import { WaxRepository } from '../repos/wax-repo';
+import { Wax } from '../models/wax';
 import Validator from '../util/validator';
 import { ResourceNotFoundError, BadRequestError } from '../errors/errors';
 
-jest.mock('../repos/user-repo', () => {
+jest.mock('../repos/wax-repo', () => {
     
-    return new class UserRepository {
+    return new class WaxRepository {
             getAll = jest.fn();
             getById = jest.fn();
-            getUserByUniqueKey = jest.fn();
-            getUserByCredentials = jest.fn();
+            getWaxByUniqueKey = jest.fn();
+            getWaxByCredentials = jest.fn();
             save = jest.fn();
             update = jest.fn();
             deleteById = jest.fn();
     }
 
 });
-describe('userService', () => {
+describe('waxService', () => {
 
-    let sut: UserService;
+    let sut: WaxService;
     let mockRepo;
 
     let mockUsers = [
-        new User(1, 'aanderson', 'password', 'Alice', 'Anderson', 'Admin'),
-        new User(2, 'bbailey', 'password', 'Bob', 'Bailey', 'User'),
-        new User(3, 'ccountryman', 'password', 'Charlie', 'Countryman', 'User'),
-        new User(4, 'ddavis', 'password', 'Daniel', 'Davis', 'User'),
-        new User(5, 'eeinstein', 'password', 'Emily', 'Einstein', 'User')
+        new Wax(1, 'aanderson', 'password', 'Alice', 'Anderson', 'Admin'),
+        new Wax(2, 'bbailey', 'password', 'Bob', 'Bailey', 'User'),
+        new Wax(3, 'ccountryman', 'password', 'Charlie', 'Countryman', 'User'),
+        new Wax(4, 'ddavis', 'password', 'Daniel', 'Davis', 'User'),
+        new Wax(5, 'eeinstein', 'password', 'Emily', 'Einstein', 'User')
     ];
 
     beforeEach(() => {

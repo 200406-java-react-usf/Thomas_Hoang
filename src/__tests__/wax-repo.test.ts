@@ -53,7 +53,7 @@ describe('waxRepo', () => {
         // Arrange
         expect.hasAssertions();
 
-        let mockWax = new Wax(1, '', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockWax = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
 
         // Act
@@ -94,7 +94,7 @@ describe('waxRepo', () => {
         // Arrange
         expect.hasAssertions();
 
-        let mockWax = new Wax(1, '', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockWax = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
 
         // Act
