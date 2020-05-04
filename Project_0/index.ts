@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import path from 'path';
 
 import { UserRouter } from './routers/user-router';
+import { BrandRouter } from './routers/brand-router';
 import { OwnedRouter } from './routers/owned-router';
 import { WaxRouter } from './routers/wax-router';
 import { AuthRouter } from './routers/auth-router';
@@ -37,6 +38,7 @@ app.use(corsFilter);
 app.use('/', express.json());
 app.use('/users', UserRouter);
 app.use('/waxes', WaxRouter);
+app.use('/brands', BrandRouter);
 app.use('/owned', OwnedRouter);
 app.use('/auth', AuthRouter);
 
