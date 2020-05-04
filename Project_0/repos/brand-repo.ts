@@ -42,7 +42,7 @@ export class BrandRepository implements CrudRepository<Brand> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where u.id = $1`;
+            let sql = `${this.baseQuery} where b.id = $1`;
             let rs = await client.query(sql, [id]);
             return mapBrandResultSet(rs.rows[0]);
         } catch (e) {
@@ -60,7 +60,7 @@ export class BrandRepository implements CrudRepository<Brand> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where u.${key} = $1`;
+            let sql = `${this.baseQuery} where b.${key} = $1`;
             let rs = await client.query(sql, [val]);
             return mapBrandResultSet(rs.rows[0]);
         } catch (e) {
