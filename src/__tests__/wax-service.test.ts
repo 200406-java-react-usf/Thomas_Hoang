@@ -169,21 +169,4 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with ResourceNotFoundError if getByid is given an unknown id', async () => {
-
-        // Arrange
-        expect.hasAssertions();
-        mockRepo.getById = jest.fn().mockReturnValue(true);
-
-        // Act
-        try {
-            await sut.getWaxByID(9999);
-        } catch (e) {
-
-            // Assert
-            expect(e instanceof ResourceNotFoundError).toBe(true);
-        }
-
-    });
-
 });

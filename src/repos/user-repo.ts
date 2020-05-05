@@ -118,7 +118,7 @@ export class UserRepository implements CrudRepository<User> {
 
         } catch (e) {
             console.log(e);
-            throw new InternalServerError('Save error');
+            throw new InternalServerError();
         } finally {
             client && client.release();
         }
@@ -129,7 +129,6 @@ export class UserRepository implements CrudRepository<User> {
         
         let client: PoolClient;
 
-        //Made it so that Users can only update their username
         try {
             client = await connectionPool.connect();
             let sql = `update users set username = $2 where id = $1;`;
