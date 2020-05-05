@@ -2,7 +2,7 @@ import { UserService } from '../services/user-service';
 import { UserRepository } from '../repos/user-repo';
 import { User } from '../models/user';
 import Validator from '../util/validator';
-import { ResourceNotFoundError, BadRequestError } from '../errors/errors';
+import { ResourceNotFoundError, BadRequestError , ResourcePersistenceError} from '../errors/errors';
 
 jest.mock('../repos/user-repo', () => {
     
@@ -173,24 +173,18 @@ describe('userService', () => {
     });
 
     test('should reject with ResourceNotFoundError if getByid is given an unknown id', async () => {
-
-        // Arrange
         expect.hasAssertions();
         mockRepo.getById = jest.fn().mockReturnValue(true);
 
-        // Act
         try {
             await sut.getUserById(9999);
         } catch (e) {
 
-            // Assert
             expect(e instanceof ResourceNotFoundError).toBe(true);
         }
-
     });
 
-    test('should resolve to a User (without passwords) when getUserByUniqueKey() successfully retrieves a user', async () => {
-
+    test('should resolve to a User (without passwords) when getUserByUniqueKey() successfully retrieves a user with username', async () => {
         expect.assertions(3);
         
         Validator.isValidId = jest.fn().mockReturnValue(true);
@@ -207,26 +201,83 @@ describe('userService', () => {
         expect(result).toBeTruthy();
         expect(result.id).toBe(1);
         expect(result.password).toBeUndefined();
-
     });
 
-    test('should reject with ResourceNotFoundError if getByid is given an unknown id', async () => {
-
-        // Arrange
+    test('should reject with ResourceNotFoundError if getByid is given an unknown username', async () => {
         expect.hasAssertions();
+
         let mockUser = new User(1, 'user', 'password', 'first', 'last', 'locked');
-        let username = mockUser.username
+        let username = 'notARealUser'
         mockRepo.getUserByUniqueKey = jest.fn().mockReturnValue(true);
 
-        // Act
         try {
             await sut.getUserByUniqueKey({'username': username});
         } catch (e) {
 
-            // Assert
             expect(e instanceof ResourceNotFoundError).toBe(true);
         }
+    });
 
+    test('should reject with BadRequestError if getByid is given an unknown field', async () => {
+
+        // Arrange
+        expect.hasAssertions();
+        let mockUser = new User(1, 'user', 'password', 'first', 'last', 'locked');
+        let username = 'notARealUser'
+        mockRepo.getUserByUniqueKey = jest.fn().mockReturnValue(true);
+
+        // Act
+        try {
+            await sut.getUserByUniqueKey({'notACorrectField': username});
+        } catch (e) {
+
+            // Assert
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
+    test('should resolve to a User (without passwords) when save() successfully persists a user', async () => {
+        expect.assertions(3);
+
+        let mockUser = new User(1, 'user', 'password', 'first', 'last', 'locked');
+
+        Validator.isValidObject = jest.fn().mockReturnValue(true);
+        sut.isUsernameAvailable = jest.fn().mockReturnValue(true);
+        mockRepo.save = jest.fn().mockImplementation((newUser: User) => {
+            return new Promise<User>((resolve) => {
+                mockUsers.push(newUser);
+                resolve(newUser);
+            });
+        });
+
+        let result = await sut.addNewUser(mockUser);
+
+        expect(result).toBeTruthy();
+        expect(result.id).toBe(1);
+        expect(result.password).toBeUndefined();
+    });
+
+    test('should reject with ResourcePersistenceError if save is given an invalid username', async () => {
+        expect.hasAssertions();
+
+        let mockUser = new User(1, 'aanderson', 'password', 'first', 'last', 'locked');
+        mockRepo.getUserByUniqueKey = jest.fn().mockReturnValue(true);
+        Validator.isValidObject = jest.fn().mockReturnValue(true);
+        sut.isUsernameAvailable = jest.fn().mockReturnValue(false);
+        mockRepo.save = jest.fn().mockImplementation((newUser: User) => {
+            return new Promise<User>((resolve) => {
+                mockUsers.push(newUser);
+                resolve(newUser);
+            });
+        });
+
+        try {
+
+            await sut.addNewUser(mockUser);
+        } catch (e) {
+
+            expect(e instanceof ResourcePersistenceError).toBe(true);
+        }
     });
 
 });

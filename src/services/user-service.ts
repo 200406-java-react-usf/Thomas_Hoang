@@ -157,7 +157,7 @@ export class UserService {
 
     }
 
-    private async isUsernameAvailable(username: string): Promise<boolean> {
+    async isUsernameAvailable(username: string): Promise<boolean> {
 
         try {
             await this.getUserByUniqueKey({'username': username});
