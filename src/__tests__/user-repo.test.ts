@@ -162,7 +162,7 @@ describe('userRepo', () => {
     test('Should resolve to true when deleteById deletes a valid user object', async () => {
         expect.hasAssertions();
         
-        let mockUser = new User(1, 'un', 'pw', 'fn', 'ln', 'locked');
+        let mockUser = new User(1, 'username', 'password', 'first', 'last', 'locked');
         (mockMapper.mapUserResultSet as jest.Mock).mockReturnValue(mockUser);
 
         let result = await sut.deleteById(1);

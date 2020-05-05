@@ -82,7 +82,7 @@ describe('userService', () => {
 
     });
 
-    test('should resolve to User when getUserById is given a valid an known id', async () => {
+    test('should resolve to User when getUserById is given a valid known id', async () => {
 
         // Arrange
         expect.assertions(3);
@@ -181,6 +181,46 @@ describe('userService', () => {
         // Act
         try {
             await sut.getUserById(9999);
+        } catch (e) {
+
+            // Assert
+            expect(e instanceof ResourceNotFoundError).toBe(true);
+        }
+
+    });
+
+    test('should resolve to a User (without passwords) when getUserByUniqueKey() successfully retrieves a user', async () => {
+
+        expect.assertions(3);
+        
+        Validator.isValidId = jest.fn().mockReturnValue(true);
+
+        let mockUser = new User(1, 'user', 'password', 'first', 'last', 'locked');
+        let username = mockUser.username;
+
+        mockRepo.getUserByUniqueKey = jest.fn().mockReturnValue(mockUser);
+
+        // Act
+        let result = await sut.getUserByUniqueKey({'username': username});
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.id).toBe(1);
+        expect(result.password).toBeUndefined();
+
+    });
+
+    test('should reject with ResourceNotFoundError if getByid is given an unknown id', async () => {
+
+        // Arrange
+        expect.hasAssertions();
+        let mockUser = new User(1, 'user', 'password', 'first', 'last', 'locked');
+        let username = mockUser.username
+        mockRepo.getUserByUniqueKey = jest.fn().mockReturnValue(true);
+
+        // Act
+        try {
+            await sut.getUserByUniqueKey({'username': username});
         } catch (e) {
 
             // Assert
