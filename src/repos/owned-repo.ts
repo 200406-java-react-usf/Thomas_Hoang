@@ -167,9 +167,10 @@ export class OwnedRepository implements CrudRepository<Owned> {
         let client: PoolClient;
 
         try {
-            //let userID = (await client.query('select id from users where id = $1', [user.userID])).rows[0].id;
+            client = await connectionPool.connect();
+            let userID = (await client.query('select id from users where id = $1', [user.userID])).rows[0].id;
             let sql = `delete from wax_owners where user_id = $1 and product_id = $2;`;
-            //let rs = await client.query(sql, [userID, productID]);  
+            let rs = await client.query(sql, [userID, productID]);  
             return true;
         }catch (e) {
             throw new InternalServerError();

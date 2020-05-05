@@ -160,8 +160,8 @@ export class WaxRepository implements CrudRepository<Wax> {
         let client: PoolClient;
 
         try {
+            client = await connectionPool.connect();
             let sql = `delete from waxes where id = $1;`;
-            let rs = await client.query(sql, [id]);  
             return true;
         }catch (e) {
             throw new InternalServerError();
