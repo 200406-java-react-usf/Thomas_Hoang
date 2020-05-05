@@ -2,7 +2,8 @@ import { UserService } from '../services/user-service';
 import { UserRepository } from '../repos/user-repo';
 import { User } from '../models/user';
 import Validator from '../util/validator';
-import { ResourceNotFoundError, BadRequestError , ResourcePersistenceError} from '../errors/errors';
+import { ResourceNotFoundError, BadRequestError , ResourcePersistenceError, AuthenticationError} from '../errors/errors';
+import validator from '../util/validator';
 
 jest.mock('../repos/user-repo', () => {
     
@@ -277,6 +278,111 @@ describe('userService', () => {
         } catch (e) {
 
             expect(e instanceof ResourcePersistenceError).toBe(true);
+        }
+    });
+
+    test('should reject with BadRequestError() when save() when user has invalid password', async () => {
+        expect.assertions(1);
+
+        let mockUser = new User(1, 'user', '', 'first', 'last', 'locked');
+
+        Validator.isValidStrings = jest.fn().mockReturnValue(false);
+        sut.isUsernameAvailable = jest.fn().mockReturnValue(true);
+        mockRepo.save = jest.fn().mockImplementation((newUser: User) => {
+            return new Promise<User>((resolve) => {
+                mockUsers.push(newUser);
+                resolve(newUser);
+            });
+        });
+
+
+        try {
+
+            await sut.addNewUser(mockUser);
+        } catch (e) {
+
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
+    test('should resolve to a User (without passwords) when authenticateUser() successfully authenticates a user', async () => {
+        expect.assertions(2);
+
+        let mockUser = new User(1, 'aanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidStrings = jest.fn().mockReturnValue(true);
+        mockRepo.getUserByCredentials = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        let result = await sut.authenticateUser(mockUser.username, mockUser.password);
+
+        expect(result).toBeTruthy();
+        expect(result.password).toBeUndefined();
+    });
+
+    test('should reject with BadRequestError when authenticateUser() is passed invalid strings', async () => {
+        expect.hasAssertions();
+
+        let mockUser = new User(1, 'aanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidStrings = jest.fn().mockReturnValue(false);
+        mockRepo.getUserByCredentials = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        try {
+
+            await sut.authenticateUser(mockUser.username, '');
+        } catch (e) {
+
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
+    test('should resolve to a User when updating a user successfully', async () => {
+        expect.assertions(1);
+
+        let mockUser = new User(1, 'newAanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidObject = jest.fn().mockReturnValue(true);
+        mockRepo.update = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        let result = await sut.updateUser(mockUser);
+
+        expect(result).toBeTruthy();
+    });
+
+    test('should reject with BadRequestError when updating an invalid id', async () => {
+        expect.hasAssertions();
+
+        let mockUser = new User(0, 'newAanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidObject = jest.fn().mockReturnValue(false);
+        mockRepo.update = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        try {
+
+            await sut.updateUser(mockUser);
+        } catch (e) {
+
+            expect(e instanceof BadRequestError).toBe(true);
         }
     });
 
