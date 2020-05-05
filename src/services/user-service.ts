@@ -148,13 +148,17 @@ export class UserService {
     }
 
     async deleteById(id: number): Promise<boolean> {
-        
+
         try {
-            throw new NotImplementedError();
-        } catch (e) {
+            if (!isValidId(id)){
+                throw new BadRequestError();
+            }
+
+        return await this.userRepo.deleteById(id);
+        }
+        catch (e) {
             throw e;
         }
-
     }
 
     async isUsernameAvailable(username: string): Promise<boolean> {

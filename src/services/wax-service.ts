@@ -81,9 +81,11 @@ export class WaxService {
     }
     async deleteByID(id: number): Promise<boolean> {
         try {
-            if (!isValidId(id))
+            if (!isValidId(id)){
                 throw new BadRequestError();
-            return await this.waxRepo.deleteById(id);
+            }
+
+        return await this.waxRepo.deleteById(id);
         }
         catch (e) {
             throw e;

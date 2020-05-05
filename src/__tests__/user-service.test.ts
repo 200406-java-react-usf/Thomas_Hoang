@@ -386,4 +386,73 @@ describe('userService', () => {
         }
     });
 
+    test('should resolve to a User when updating a user successfully', async () => {
+        expect.assertions(1);
+
+        let mockUser = new User(1, 'newAanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidObject = jest.fn().mockReturnValue(true);
+        mockRepo.update = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        let result = await sut.updateUser(mockUser);
+
+        expect(result).toBeTruthy();
+    });
+
+    test('should reject with BadRequestError when updating an invalid id', async () => {
+        expect.hasAssertions();
+
+        let mockUser = new User(0, 'newAanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidObject = jest.fn().mockReturnValue(false);
+        mockRepo.update = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        try {
+
+            await sut.updateUser(mockUser);
+        } catch (e) {
+
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
+    test('should resolve to true when given user is deleted', async () => {
+        expect.assertions(1);
+
+        Validator.isValidId = jest.fn().mockReturnValue(true);
+        mockRepo.deleteById = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        let result = await sut.deleteById(1);
+
+        expect(result).toBeTruthy();
+    });
+
+    test('should reject BadRequestError when given user is invalid', async () => {
+        expect.hasAssertions();
+
+        validator.isValidId = jest.fn().mockReturnValue(false);
+        mockRepo.deleteById = jest.fn().mockReturnValue(true);
+
+        try {
+            await sut.deleteById(-1);
+        } catch (e) {
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
 });
