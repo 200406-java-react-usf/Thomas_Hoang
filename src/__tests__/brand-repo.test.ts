@@ -13,7 +13,7 @@ jest.mock('..', () => {
 
 jest.mock('../util/result-set-mapper', () => {
     return {
-        mapWaxResultSet: jest.fn()
+        mapBrandResultSet: jest.fn()
     }
 });
 
@@ -81,7 +81,7 @@ describe('brandRepo', () => {
         expect.hasAssertions();
 
         let mockBrand = new Brand(1, 'brand');
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockBrand);
+        (mockMapper.mapBrandResultSet as jest.Mock).mockReturnValue(mockBrand);
 
         let result = await sut.getById(1);
 
@@ -107,47 +107,47 @@ describe('brandRepo', () => {
         expect(mockConnect).toBeCalledTimes(1);
     });
 
-    test('Should resolve to a User object when getWaxByUniqueKey retrieves a record given a valid unique key.', async () => {
+    test('Should resolve to a Brand object when getBrandByUniqueKey retrieves a record given a valid unique key.', async () => {
         expect.hasAssertions();
         
         let mockBrand = new Brand(1, 'brand');
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
+        (mockMapper.mapBrandResultSet as jest.Mock).mockReturnValue(mockBrand);
 
-        let result = await sut.getBrandByUniqueKey('username', 'un');
+        let result = await sut.getBrandByUniqueKey('brandName', 'brand');
 
         expect(result).toBeTruthy();
-        expect(result instanceof Wax).toBe(true);
+        expect(result instanceof Brand).toBe(true);
     });
 
-    test('should resolve to a wax object if save returns a valid wax', async () => {
+    test('should resolve to a brand object if save returns a valid brand', async () => {
         expect.hasAssertions();
 
-        let mockWax = new Wax(1, 'productName', 'brand', 'category', 0.50, false, 1, "description");
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
+        let mockBrand = new Brand(1, 'brand');
+        (mockMapper.mapBrandResultSet as jest.Mock).mockReturnValue(mockBrand);
 
-        let result = await sut.save(mockWax);
+        let result = await sut.save(mockBrand);
 
         expect(result).toBeTruthy();
-        expect(result instanceof Wax).toBe(true);
+        expect(result instanceof Brand).toBe(true);
     });
 
     test('should resolve to true if updates a valid id', async () => {
 
         expect.hasAssertions();
-        let mockWax = new Wax(1, 'productName', 'brand', 'category', 0.50, false, 1, "description");
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
+        let mockBrand = new Brand(1, 'brand');
+        (mockMapper.mapBrandResultSet as jest.Mock).mockReturnValue(mockBrand);
 
 
-        let result = await sut.update(mockWax);
+        let result = await sut.update(mockBrand);
 
         expect(result).toBeTruthy();
     });
 
-    test('Should resolve to true when deleteById deletes a valid wax ', async () => {
+    test('Should resolve to true when deleteById deletes a valid brand ', async () => {
         expect.hasAssertions();
         
-        let mockWax = new Wax(1, 'productName', 'brand', 'category', 0.50, false, 1, "description");
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
+        let mockBrand = new Brand(1, 'brand');
+        (mockMapper.mapBrandResultSet as jest.Mock).mockReturnValue(mockBrand);
 
         let result = await sut.deleteById(1);
 

@@ -122,16 +122,19 @@ export class BrandService {
     }
 
     async deleteById(id: number): Promise<boolean> {
-        
         try {
-            throw new NotImplementedError();
-        } catch (e) {
+            if (!isValidId(id)){
+                throw new BadRequestError();
+            }
+
+        return await this.brandRepo.deleteById(id);
+        }
+        catch (e) {
             throw e;
         }
-
     }
-
-    private async isBrandAddedYet(brandName: string): Promise<boolean> {
+    
+    async isBrandAddedYet(brandName: string): Promise<boolean> {
 
         try {
             await this.getBrandByUniqueKey({'brand_name': brandName});
