@@ -128,17 +128,18 @@ describe('waxRepo', () => {
     test('should resolve to a wax object if save returns a valid wax', async () => {
         expect.hasAssertions();
 
+
         let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
-        let mockWax2 = new Wax(2, 'product2', 'brand', 'category', 0.50, true, 5, undefined);
-        let mockWax3 = new Wax(3, 'product3', 'brand', 'category', 0.50, true, undefined, undefined);
+        let mockWax2 = new Wax(2, 'product2', 'brand', 'category', 0.50, true, undefined, 'Blank Description');
+        let mockWax3 = new Wax(3, 'product3', 'brand', 'category', 0.50, true, 4, undefined);
 
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax1);
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax2);
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax3);
 
         let result1 = await sut.save(mockWax1);
-        let result2 = await sut.save(mockWax1);
-        let result3 = await sut.save(mockWax1);
+        let result2 = await sut.save(mockWax2);
+        let result3 = await sut.save(mockWax3);
 
         expect(result1).toBeTruthy();
         expect(result1 instanceof Wax).toBe(true);
@@ -148,12 +149,14 @@ describe('waxRepo', () => {
         expect(result3 instanceof Wax).toBe(true);
     });
 
+
+
     test('should resolve to true if updates a valid id', async () => {
         expect.hasAssertions();
 
         let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
-        let mockWax2 = new Wax(2, 'product2', 'brand', 'category', 0.50, true, 5, undefined);
-        let mockWax3 = new Wax(3, 'product3', 'brand', 'category', 0.50, true, undefined, undefined);
+        let mockWax2 = new Wax(2, 'product2', 'brand', 'category', 0.50, true, undefined, 'Blank Description');
+        let mockWax3 = new Wax(3, 'product3', 'brand', 'category', 0.50, true, 4, undefined);
 
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax1);
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax2);
@@ -161,9 +164,9 @@ describe('waxRepo', () => {
 
 
 
-        let result1 = await sut.save(mockWax1);
-        let result2 = await sut.save(mockWax1);
-        let result3 = await sut.save(mockWax1);
+        let result1 = await sut.update(mockWax1);
+        let result2 = await sut.update(mockWax2);
+        let result3 = await sut.update(mockWax3);
 
         expect(result1).toBeTruthy();
         expect(result2).toBeTruthy();
