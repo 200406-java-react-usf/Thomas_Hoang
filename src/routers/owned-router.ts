@@ -27,7 +27,7 @@ OwnedRouter.get('/', async (req, resp) => {
         resp.status(e.statusCode).json(e);
     }
 });
-OwnedRouter.get('/:id', async (req, resp) => {
+OwnedRouter.get('/:product_id', async (req, resp) => {
     const id = +req.params.id; // the plus sign is to type coerce id into a number
     try {
         let payload = await ownedService.getWaxByID(id);

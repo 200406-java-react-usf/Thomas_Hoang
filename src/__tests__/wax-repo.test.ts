@@ -119,7 +119,7 @@ describe('waxRepo', () => {
         let mockWax = new Wax(1, 'productName', 'brand', 'category', 0.50, false, 1, "description");
         (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
 
-        let result = await sut.getWaxByUniqueKey('username', 'un');
+        let result = await sut.getWaxByUniqueKey('productName', 'un');
 
         expect(result).toBeTruthy();
         expect(result instanceof Wax).toBe(true);

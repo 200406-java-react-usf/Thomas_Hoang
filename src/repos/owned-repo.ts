@@ -83,49 +83,30 @@ export class OwnedRepository implements CrudRepository<Owned> {
         }
     }
 
-    async save(newWax: Owned): Promise<Owned> {
+    async save(newOwned: Owned): Promise<Owned> {
             
         let client: PoolClient;
 
         try {
             client = await connectionPool.connect();
-            let brandID = (await client.query('select id from brands where brand_name = $1', [newWax.brand])).rows[0].id;
-            if (newWax.scentStrength != undefined && newWax.scentDescription != undefined){
+            if (newOwned.personalRating != undefined){
                 let sql = `
-                    insert into waxes (product_name, brand_id, price, limited edition, category, strength, description) 
-                    values ($1, $2, $3, $4, $5, $6, $7) returning id
+                    insert into wax_owners (user_id, product_id, quantity, personal_rating) 
+                    values ($1, $2, $3, $4) returning id
                 `;
 
-                let rs = await client.query(sql, [newWax.productName, brandID , newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
-                newWax.productID = rs.rows[0].id;
-                return newWax;
-            }else if (newWax.scentStrength != undefined){
+                let rs = await client.query(sql, [newOwned.userID, newOwned.productID, newOwned.quantity, newOwned.personalRating]);
+                newOwned.productID = rs.rows[0].id;
+                return newOwned;
+            }else if (newOwned.personalRating == undefined){
                 let sql = `
-                    insert into waxes (product_name, brand_id, price, limited edition, category, strength) 
-                    values ($1, $2, $3, $4, $5, $6) returning id
+                    insert into wax_owners (user_id, product_id, quantity) 
+                    values ($1, $2, $3) returning product_id
                 `;
             
-                let rs = await client.query(sql, [newWax.productName , brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength]);
-                newWax.productID = rs.rows[0].id;
-                return newWax;
-            }else if (newWax.scentDescription != undefined){
-                let sql = `
-                    insert into waxes (product_name, brand_id, price, limited edition, category, description) 
-                    values ($1, $2, $3, $4, $5, $6) returning id
-                `;
-            
-                let rs = await client.query(sql, [newWax.productName , brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentDescription]);
-                newWax.productID = rs.rows[0].id;
-                return newWax;
-            }else if (newWax.scentStrength == undefined && newWax.scentDescription == undefined){
-                let sql = `
-                    insert into waxes (product_name, brand_id, price, limited edition, category) 
-                    values ($1, $2, $3, $4, $5) returning id
-                `;
-    
-                let rs = await client.query(sql, [newWax.productName , brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory]);
-                newWax.productID = rs.rows[0].id;
-                return newWax;
+                let rs = await client.query(sql, [newOwned.userID, newOwned.productID, newOwned.quantity]);
+                newOwned.productID = rs.rows[0].id;
+                return newOwned;
             }
         } catch (e) {
             console.log(e);
@@ -141,18 +122,23 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
+            if (updatedWax.personalRating != undefined){
+                let sql = `
+                    insert into wax_owners (user_id, product_id, quantity, personal_rating) 
+                    values ($1, $2, $3, $4) returning product_id
+                `;
 
-            if (updatedWax.scentStrength != undefined && updatedWax.scentDescription != undefined){
-                let sql = `update waxes set strength = $2, description = $3 where id = $1;`;
-                let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength, updatedWax.scentDescription]);
+                let rs = await client.query(sql, [updatedWax.userID, updatedWax.productID, updatedWax.quantity, updatedWax.personalRating]);
+                updatedWax.productID = rs.rows[0].id;
                 return true;
-            }else if (updatedWax.scentStrength != undefined){
-                let sql = `update waxes set strength = $2 where id = $1;`;
-                let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength]);
-                return true;
-            }else if (updatedWax.scentDescription != undefined){
-                let sql = `update waxes set description = $2 where id = $1;`;
-                let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentDescription]);
+            }else if (updatedWax.personalRating == undefined){
+                let sql = `
+                    insert into wax_owners (user_id, product_id, quantity) 
+                    values ($1, $2, $3) returning product_id
+                `;
+            
+                let rs = await client.query(sql, [updatedWax.userID, updatedWax.productID, updatedWax.quantity]);
+                updatedWax.productID = rs.rows[0].id;
                 return true;
             }
         }catch (e) {
@@ -168,9 +154,8 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            let userID = (await client.query('select id from users where id = $1', [user.userID])).rows[0].id;
-            let sql = `delete from wax_owners where user_id = $1 and product_id = $2;`;
-            let rs = await client.query(sql, [userID, productID]);  
+            let sql = `delete from wax_owners product_id = $2;`;
+            let rs = await client.query(sql, [productID]);  
             return true;
         }catch (e) {
             throw new InternalServerError();
