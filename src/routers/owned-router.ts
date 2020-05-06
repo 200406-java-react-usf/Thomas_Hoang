@@ -68,7 +68,7 @@ OwnedRouter.delete('', adminGuard, async (req, resp) => {
     console.log('DELETE REQUEST RECEIVED AT /owned');
     console.log(req.body);
     try {
-        let deletedUser = await ownedService.deleteByID(req.body);
+        let deletedUser = await ownedService.deleteByID(+req.body.id);
         return resp.status(201).json(deletedUser);
     } catch (e) {
         return resp.status(e.statusCode).json(e);

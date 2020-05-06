@@ -14,7 +14,7 @@ export class BrandRepository implements CrudRepository<Brand> {
 
     baseQuery = `
         select
-            b.id
+            b.id,
             b.brand_name
         from brands b
     `;

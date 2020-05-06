@@ -65,7 +65,7 @@ WaxRouter.delete('', adminGuard, async (req, resp) => {
     console.log('DELETE REQUEST RECEIVED AT /waxes');
     console.log(req.body);
     try {
-        let updatedUser = await waxService.deleteByID(req.body);
+        let updatedUser = await waxService.deleteByID(+req.body.id);
         return resp.status(201).json(updatedUser);
     } catch (e) {
         return resp.status(e.statusCode).json(e);

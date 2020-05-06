@@ -12,7 +12,8 @@ import { connectionPool } from '..';
 import { mapOwnedResultSet } from '../util/result-set-mapper';
 
 export class OwnedRepository implements CrudRepository<Owned> {
-
+    user = '';
+    
     baseQuery = `
         select
 	        u.id as user_id,
@@ -41,7 +42,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try{
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery}`;
+            let sql = `${this.baseQuery} where user_id = $1`;
             let rs = await client.query(sql);
             return rs.rows.map(mapOwnedResultSet);
         }catch (e) {
@@ -57,7 +58,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where w.id = $1`;
+            let sql = `${this.baseQuery} where wax_id = $1`;
             let rs = await client.query(sql, [id]);
             return mapOwnedResultSet(rs.rows[0])
         }catch (e) {

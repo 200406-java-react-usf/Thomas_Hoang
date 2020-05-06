@@ -70,7 +70,7 @@ BrandRouter.delete('', adminGuard, async (req, resp) => {
     console.log('DELETE REQUEST RECEIVED AT /brands');
     console.log(req.body);
     try {
-        let deletedUser = await brandService.deleteById(req.body);
+        let deletedUser = await brandService.deleteById(+req.body.id);
         return resp.status(201).json(deletedUser);
     } catch (e) {
         return resp.status(e.statusCode).json(e);
