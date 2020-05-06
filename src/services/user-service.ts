@@ -3,8 +3,7 @@ import { UserRepository } from "../repos/user-repo";
 import { isValidId, isValidStrings, isValidObject, isPropertyOf, isEmptyObject } from "../util/validator";
 import { 
     BadRequestError, 
-    ResourceNotFoundError, 
-    NotImplementedError, 
+    ResourceNotFoundError,  
     ResourcePersistenceError, 
     AuthenticationError 
 } from "../errors/errors";

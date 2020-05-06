@@ -346,6 +346,28 @@ describe('userService', () => {
         }
     });
 
+        test('should reject with BadRequestError when authenticateUser() is passed invalid strings', async () => {
+        expect.hasAssertions();
+
+        let mockUser = new User(1, 'aanderson', 'password', 'Alice', 'Anderson', 'Admin');
+
+        Validator.isValidStrings = jest.fn().mockReturnValue(false);
+        mockRepo.getUserByCredentials = jest.fn().mockImplementation((user : User) => {
+            return new Promise<User>((resolve) => {
+            mockUsers.push(user)
+            resolve(user)
+            });
+        });
+
+        try {
+
+            await sut.authenticateUser(mockUser.username, '');
+        } catch (e) {
+
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
     test('should resolve to a User when updating a user successfully', async () => {
         expect.assertions(1);
 
