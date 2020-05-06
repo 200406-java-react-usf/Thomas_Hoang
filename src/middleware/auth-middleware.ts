@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { AuthenticationError, AuthorizationError } from "../errors/errors";
+import { Principal } from "../dtos/principal";
+import { UserRepository } from "../repos/user-repo"
 
 export const adminGuard = (req: Request, resp: Response, next) => {
 

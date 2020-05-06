@@ -3,13 +3,13 @@ import express from 'express';
 import AppConfig from '../config/app';
 import { isEmptyObject } from '../util/validator';
 import { ParsedUrlQuery } from 'querystring';
-import { adminGuard } from '../middleware/auth-middleware';
+import { adminGuard} from '../middleware/auth-middleware';
 
 export const OwnedRouter = express.Router();
 
 const ownedService = AppConfig.ownedService;
 
-OwnedRouter.get('/', async (req, resp) => {
+OwnedRouter.get('/', adminGuard, async (req, resp) => {
     
     try {
 
@@ -27,7 +27,7 @@ OwnedRouter.get('/', async (req, resp) => {
         resp.status(e.statusCode).json(e);
     }
 });
-OwnedRouter.get('/:product_id', async (req, resp) => {
+OwnedRouter.get('/:product_id', adminGuard, async (req, resp) => {
     const id = +req.params.id; // the plus sign is to type coerce id into a number
     try {
         let payload = await ownedService.getWaxByID(id);
@@ -37,7 +37,7 @@ OwnedRouter.get('/:product_id', async (req, resp) => {
     }
 });
 
-OwnedRouter.post('', async (req, resp) => {
+OwnedRouter.post('', adminGuard, async (req, resp) => {
 
     console.log('POST REQUEST RECEIVED AT /owned');
     console.log(req.body);
@@ -50,7 +50,7 @@ OwnedRouter.post('', async (req, resp) => {
 
 });
 
-OwnedRouter.put('', async (req, resp) => {
+OwnedRouter.put('', adminGuard, async (req, resp) => {
 
     console.log('PUT REQUEST RECEIVED AT /owned');
     console.log(req.body);
@@ -63,7 +63,7 @@ OwnedRouter.put('', async (req, resp) => {
 
 });
 
-OwnedRouter.delete('', async (req, resp) => {
+OwnedRouter.delete('', adminGuard, async (req, resp) => {
 
     console.log('DELETE REQUEST RECEIVED AT /owned');
     console.log(req.body);

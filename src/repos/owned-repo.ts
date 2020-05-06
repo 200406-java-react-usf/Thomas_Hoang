@@ -12,7 +12,7 @@ import { connectionPool } from '..';
 import { mapOwnedResultSet } from '../util/result-set-mapper';
 
 export class OwnedRepository implements CrudRepository<Owned> {
-    
+
     baseQuery = `
         select
 	        u.id as user_id,

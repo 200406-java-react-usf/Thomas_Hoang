@@ -9,7 +9,7 @@ export const BrandRouter = express.Router();
 
 const brandService = AppConfig.brandService;
 
-BrandRouter.get('', adminGuard, async (req, resp) => {
+BrandRouter.get('', async (req, resp) => {
 
     try {
 
