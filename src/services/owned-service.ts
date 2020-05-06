@@ -1,5 +1,6 @@
 import { Owned } from "../models/owned";
 import { OwnedRepository } from "../repos/owned-repo";
+import { WaxRepository } from "../repos/wax-repo";
 import { isValidId, isValidStrings, isValidObject, isPropertyOf, isEmptyObject } from "../util/validator";
 import { 
     BadRequestError,
@@ -89,7 +90,7 @@ export class OwnedService {
             throw e;
         }
     }
-    private async isWaxAddedYet(productName: string, brand: string): Promise<boolean> {
+    async isWaxAddedYet(productName: string, brand: string): Promise<boolean> {
         try {
             await this.getWaxByUniqueKey({ 'product_name': productName }) && this.getWaxByUniqueKey({ 'brand_name': brand });
         }

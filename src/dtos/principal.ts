@@ -5,8 +5,8 @@ export class Principal {
     role: string;
 
     constructor(id: number, un: string, role: string) {
-        this.id = id;
-        this.username = un;
-        this.role = role;
+    	this.id = id;
+    	this.username = un;
+    	this.role = role;
     }
 }

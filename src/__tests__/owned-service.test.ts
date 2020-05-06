@@ -1,39 +1,38 @@
-import { WaxService } from '../services/wax-service';
-import { WaxRepository } from '../repos/wax-repo';
-import { Wax } from '../models/wax';
+import { OwnedService } from '../services/owned-service';
+import { OwnedRepository } from '../repos/owned-repo';
+import { Owned } from '../models/owned';
 import Validator from '../util/validator';
 import { ResourceNotFoundError, BadRequestError , ResourcePersistenceError, AuthenticationError} from '../errors/errors';
 
-jest.mock('../repos/wax-repo', () => {
+jest.mock('../repos/owned-repo', () => {
     
-    return new class WaxRepository {
+    return new class OwnedRepository {
             getAll = jest.fn();
             getById = jest.fn();
-            getWaxByUniqueKey = jest.fn();
-            getWaxByCredentials = jest.fn();
+            getOwnedByUniqueKey = jest.fn();
+            getOwnedByCredentials = jest.fn();
             save = jest.fn();
             update = jest.fn();
             deleteById = jest.fn();
     }
 
 });
-describe('waxService', () => {
+describe('ownedService', () => {
 
-    let sut: WaxService;
+    let sut: OwnedService;
     let mockRepo;
 
-    let mockWaxes = [
-        //Tried each possible comibination of waxes with nullable props
-        new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description'),
-        new Wax(2, 'product2', 'brand', 'category', 0.50, true, 5),
-        new Wax(3, 'product3', 'brand', 'category', 0.50, true)
+    let mockOwnedes = [
+        //Tried each possible comibination of ownedes with nullable props
+        new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description"),
+        new Owned(2, 2, 'productName2', 'brand', 'category', 0.50, false, 5, undefined)
     ];
 
     beforeEach(() => {
 
         mockRepo = jest.fn(() => {
             return {
-                getAll: jest.fn(),
+                getAllWaxes: jest.fn(),
                 getById: jest.fn(),
                 getWaxByUniqueKey: jest.fn(),
                 getWaxByCredentials: jest.fn(),
@@ -44,16 +43,16 @@ describe('waxService', () => {
         });
 
         // @ts-ignore
-        sut = new WaxService(mockRepo);
+        sut = new OwnedService(mockRepo);
     
     });
 
 
-    test('should resolve to Wax[] when getAllWaxes() successfully retrieves waxes from the data source', async () => {
+    test('should resolve to Owned[] when getAllWaxes() successfully retrieves ownedes from the data source', async () => {
 
         // Arrange
         expect.hasAssertions();
-        mockRepo.getAll = jest.fn().mockReturnValue(mockWaxes);
+        mockRepo.getAll = jest.fn().mockReturnValue(mockOwnedes);
 
         // Act
         let result = await sut.getAllWaxes();
@@ -64,7 +63,7 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with ResourceNotFoundError when getAllWaxes fails to get any Waxes from the data source', async () => {
+    test('should reject with ResourceNotFoundError when getAllOwnedes fails to get any Ownedes from the data source', async () => {
 
         // Arrange
         expect.assertions(1);
@@ -81,7 +80,7 @@ describe('waxService', () => {
 
     });
 
-    test('should resolve to Wax when getWaxById is given a valid known id', async () => {
+    test('should resolve to Owned when getOwnedById is given a valid known id', async () => {
 
         // Arrange
         expect.assertions(2);
@@ -89,7 +88,7 @@ describe('waxService', () => {
         Validator.isValidId = jest.fn().mockReturnValue(true);
 
         mockRepo.getById = jest.fn().mockImplementation((id: number) => {
-            return new Promise<Wax>((resolve) => resolve(mockWaxes[id - 1]));
+            return new Promise<Owned>((resolve) => resolve(mockOwnedes[id - 1]));
         });
 
 
@@ -102,7 +101,7 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with BadRequestError when getWaxById is given a invalid value as an id (decimal)', async () => {
+    test('should reject with BadRequestError when getOwnedById is given a invalid value as an id (decimal)', async () => {
 
         // Arrange
         expect.hasAssertions();
@@ -119,7 +118,7 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with BadRequestError when getWaxById is given a invalid value as an id (zero)', async () => {
+    test('should reject with BadRequestError when getOwnedById is given a invalid value as an id (zero)', async () => {
 
         // Arrange
         expect.hasAssertions();
@@ -136,7 +135,7 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with BadRequestError when getWaxById is given a invalid value as an id (NaN)', async () => {
+    test('should reject with BadRequestError when getOwnedById is given a invalid value as an id (NaN)', async () => {
 
         // Arrange
         expect.hasAssertions();
@@ -153,7 +152,7 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with BadRequestError when getWaxById is given a invalid value as an id (negative)', async () => {
+    test('should reject with BadRequestError when getOwnedById is given a invalid value as an id (negative)', async () => {
 
         // Arrange
         expect.hasAssertions();
@@ -170,7 +169,7 @@ describe('waxService', () => {
 
     });
 
-    test('should reject with ResourceNotFoundError if getWaxByid is given an unknown id', async () => {
+    test('should reject with ResourceNotFoundError if getOwnedByid is given an unknown id', async () => {
         expect.hasAssertions();
         mockRepo.getById = jest.fn().mockReturnValue(true);
 
@@ -185,8 +184,8 @@ describe('waxService', () => {
     test('should reject with ResourceNotFoundError if getByid is given an unknown product', async () => {
         expect.hasAssertions();
 
-        let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
-        let productName = 'notARealWax'
+        let mockOwned1 = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
+        let productName = 'notARealOwned'
         mockRepo.getWaxByUniqueKey = jest.fn().mockReturnValue(true);
 
         try {
@@ -200,13 +199,12 @@ describe('waxService', () => {
     test('should reject with BadRequestError if getByid is given an unknown field', async () => {
 
         expect.hasAssertions();
-        let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
-        let username = 'notARealUser'
-        mockRepo.getWaxByUniqueKey = jest.fn().mockReturnValue(true);
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
+        mockRepo.getOwnedByUniqueKey = jest.fn().mockReturnValue(true);
 
         // Act
         try {
-            await sut.getWaxByUniqueKey({'notACorrectField': username});
+            await sut.getWaxByUniqueKey({'notACorrectField': 'productName'});
         } catch (e) {
 
             // Assert
@@ -214,43 +212,42 @@ describe('waxService', () => {
         }
     });
 
-    test('should resolve to a wax when save() successfully persists a wax', async () => {
+    test('should resolve to a owned when save() successfully persists a owned', async () => {
         expect.assertions(2);
-
-        let mockWax = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
 
         Validator.isValidObject = jest.fn().mockReturnValue(true);
         sut.isWaxAddedYet = jest.fn().mockReturnValue(true);
-        mockRepo.save = jest.fn().mockImplementation((newUser: Wax) => {
-            return new Promise<Wax>((resolve) => {
-                mockWaxes.push(newUser);
+        mockRepo.save = jest.fn().mockImplementation((newUser: Owned) => {
+            return new Promise<Owned>((resolve) => {
+                mockOwnedes.push(newUser);
                 resolve(newUser);
             });
         });
 
-        let result = await sut.addNewWax(mockWax);
+        let result = await sut.addNewWax(mockOwned);
 
         expect(result).toBeTruthy();
         expect(result.productID).toBe(1);
     });
 
-    test('should reject with ResourcePersistenceError if save is given an invalid field', async () => {
+    test('should reject with ResourcePersistenceError if save is given an invalid wax', async () => {
         expect.hasAssertions();
 
-        let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, undefined, 1, "description");
         mockRepo.getUserByUniqueKey = jest.fn().mockReturnValue(true);
         Validator.isValidObject = jest.fn().mockReturnValue(true);
         sut.isWaxAddedYet = jest.fn().mockReturnValue(false);
-        mockRepo.save = jest.fn().mockImplementation((newUser: Wax) => {
-            return new Promise<Wax>((resolve) => {
-                mockWaxes.push(newUser);
+        mockRepo.save = jest.fn().mockImplementation((newUser: Owned) => {
+            return new Promise<Owned>((resolve) => {
+                mockOwnedes.push(newUser);
                 resolve(newUser);
             });
         });
 
         try {
 
-            await sut.addNewWax(mockWax1);
+            await sut.addNewWax(mockOwned);
         } catch (e) {
 
             expect(e instanceof ResourcePersistenceError).toBe(true);
@@ -260,21 +257,21 @@ describe('waxService', () => {
     test('should reject with BadRequestError() when save() when user has invalid field', async () => {
         expect.assertions(1);
 
-        let mockWax1 = new Wax(1, 'product', '', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
 
         Validator.isValidStrings = jest.fn().mockReturnValue(false);
         sut.isWaxAddedYet = jest.fn().mockReturnValue(true);
-        mockRepo.save = jest.fn().mockImplementation((newWax: Wax) => {
-            return new Promise<Wax>((resolve) => {
-                mockWaxes.push(newWax);
-                resolve(newWax);
+        mockRepo.save = jest.fn().mockImplementation((newOwned: Owned) => {
+            return new Promise<Owned>((resolve) => {
+                mockOwnedes.push(newOwned);
+                resolve(newOwned);
             });
         });
 
 
         try {
 
-            await sut.addNewWax(mockWax1);
+            await sut.addNewWax(mockOwned);
         } catch (e) {
 
             expect(e instanceof BadRequestError).toBe(true);
@@ -282,20 +279,20 @@ describe('waxService', () => {
     });
 
 
-    test('should resolve to a Wax when updating a wax successfully', async () => {
+    test('should resolve to a Owned when updating a owned successfully', async () => {
         expect.assertions(1);
 
-        let mockWax1 = new Wax(1, 'newProduct', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 3, 1, "description");
 
         Validator.isValidObject = jest.fn().mockReturnValue(true);
-        mockRepo.update = jest.fn().mockImplementation((wax : Wax) => {
-            return new Promise<Wax>((resolve) => {
-            mockWaxes.push(wax)
-            resolve(wax)
+        mockRepo.update = jest.fn().mockImplementation((owned : Owned) => {
+            return new Promise<Owned>((resolve) => {
+            mockOwnedes.push(owned)
+            resolve(owned)
             });
         });
 
-        let result = await sut.updateWax(mockWax1);
+        let result = await sut.updateWax(mockOwned);
 
         expect(result).toBeTruthy();
     });
@@ -303,19 +300,19 @@ describe('waxService', () => {
     test('should reject with BadRequestError when updating an invalid id', async () => {
         expect.hasAssertions();
 
-        let mockWax1 = new Wax(0, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
 
         Validator.isValidObject = jest.fn().mockReturnValue(false);
-        mockRepo.update = jest.fn().mockImplementation((wax : Wax) => {
-            return new Promise<Wax>((resolve) => {
-            mockWaxes.push(wax)
-            resolve(wax)
+        mockRepo.update = jest.fn().mockImplementation((owned : Owned) => {
+            return new Promise<Owned>((resolve) => {
+            mockOwnedes.push(owned)
+            resolve(owned)
             });
         });
 
         try {
 
-            await sut.updateWax(mockWax1);
+            await sut.updateWax(mockOwned);
         } catch (e) {
 
             expect(e instanceof BadRequestError).toBe(true);
@@ -326,33 +323,33 @@ describe('waxService', () => {
     test('should reject with BadRequestError when updating an invalid id', async () => {
         expect.hasAssertions();
 
-        let mockWax = new Wax(0, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
 
         Validator.isValidObject = jest.fn().mockReturnValue(false);
-        mockRepo.update = jest.fn().mockImplementation((wax : Wax) => {
-            return new Promise<Wax>((resolve) => {
-            mockWaxes.push(wax)
-            resolve(wax)
+        mockRepo.update = jest.fn().mockImplementation((owned : Owned) => {
+            return new Promise<Owned>((resolve) => {
+            mockOwnedes.push(owned)
+            resolve(owned)
             });
         });
 
         try {
 
-            await sut.updateWax(mockWax);
+            await sut.updateWax(mockOwned);
         } catch (e) {
 
             expect(e instanceof BadRequestError).toBe(true);
         }
     });
 
-    test('should resolve to true when given wax id is deleted', async () => {
+    test('should resolve to true when given owned id is deleted', async () => {
         expect.assertions(1);
 
         Validator.isValidId = jest.fn().mockReturnValue(true);
-        mockRepo.deleteById = jest.fn().mockImplementation((wax : Wax) => {
-            return new Promise<Wax>((resolve) => {
-            mockWaxes.push(wax)
-            resolve(wax)
+        mockRepo.deleteById = jest.fn().mockImplementation((owned : Owned) => {
+            return new Promise<Owned>((resolve) => {
+            mockOwnedes.push(owned)
+            resolve(owned)
             });
         });
 
@@ -374,20 +371,20 @@ describe('waxService', () => {
         }
     });
 
-    test('should resolve to a true when wax is not added yet', async () => {
+    test('should resolve to a true when owned is not added yet', async () => {
         expect.assertions(1);
 
-        let mockWax1 = new Wax(1, 'newProduct', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockOwned = new Owned(1, 1, 'productName', 'brand', 'category', 0.50, false, 5, 5, 1, "description");
 
         Validator.isValidObject = jest.fn().mockReturnValue(true);
-        mockRepo.isWaxAddedYet = jest.fn().mockImplementation((wax : Wax) => {
-            return new Promise<Wax>((resolve) => {
-            mockWaxes.push(wax)
-            resolve(wax)
+        mockRepo.isOwnedAddedYet = jest.fn().mockImplementation((owned : Owned) => {
+            return new Promise<Owned>((resolve) => {
+            mockOwnedes.push(owned)
+            resolve(owned)
             });
         });
 
-        let result = await sut.isWaxAddedYet(mockWax1.productName, mockWax1.brand);
+        let result = await sut.isWaxAddedYet(mockOwned.productName, mockOwned.brand);
 
         expect(result).toBeTruthy();
     });

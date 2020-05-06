@@ -4,7 +4,7 @@ export class Brand{
     brandName: string;
 
     constructor(id: number, brandName: string){
-        this.id = id;
-        this.brandName = brandName;
+    	this.id = id;
+    	this.brandName = brandName;
     }
 }

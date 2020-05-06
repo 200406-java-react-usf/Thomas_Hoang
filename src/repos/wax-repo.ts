@@ -66,7 +66,7 @@ export class WaxRepository implements CrudRepository<Wax> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where u.${key} = $1`;
+            let sql = `${this.baseQuery} where w.${key} = $1`;
             let rs = await client.query(sql, [val]);
             return mapWaxResultSet(rs.rows[0]);
         } catch (e) {
