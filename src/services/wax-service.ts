@@ -93,7 +93,8 @@ export class WaxService {
     }
     async isWaxAddedYet(productName: string, brand: string): Promise<boolean> {
         try {
-            await this.getWaxByUniqueKey({ 'product_name': productName }) && this.getWaxByUniqueKey({ 'brand_name': brand });
+            await this.getWaxByUniqueKey({ 'product_name': productName }) 
+            await this.getWaxByUniqueKey({ 'brand_name': brand });
         }
         catch (e) {
             console.log('Wax is not added yet.');

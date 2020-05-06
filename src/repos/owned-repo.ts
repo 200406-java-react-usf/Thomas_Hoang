@@ -73,7 +73,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where w.${key} = $1`;
+            let sql = `${this.baseQuery} where ${key} = $1`;
             let rs = await client.query(sql, [val]);
             return mapOwnedResultSet(rs.rows[0]);
         } catch (e) {
@@ -89,23 +89,23 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            if (newOwned.personalRating != undefined){
+            if (newOwned.wax_id != undefined){
                 let sql = `
                     insert into wax_owners (user_id, product_id, quantity, personal_rating) 
-                    values ($1, $2, $3, $4) returning id
+                    values ($1, $2, $3, $4) returning user_id
                 `;
 
-                let rs = await client.query(sql, [newOwned.userID, newOwned.productID, newOwned.quantity, newOwned.personalRating]);
-                newOwned.productID = rs.rows[0].id;
+                let rs = await client.query(sql, [newOwned.user_id, newOwned.wax_id, newOwned.quantity, newOwned.personal_rating]);
+                newOwned.wax_id = rs.rows[0].id;
                 return newOwned;
-            }else if (newOwned.personalRating == undefined){
+            }else if (newOwned.personal_rating == undefined){
                 let sql = `
                     insert into wax_owners (user_id, product_id, quantity) 
-                    values ($1, $2, $3) returning product_id
+                    values ($1, $2, $3) returning user_id
                 `;
             
-                let rs = await client.query(sql, [newOwned.userID, newOwned.productID, newOwned.quantity]);
-                newOwned.productID = rs.rows[0].id;
+                let rs = await client.query(sql, [newOwned.user_id, newOwned.wax_id, newOwned.quantity]);
+                newOwned.wax_id = rs.rows[0].id;
                 return newOwned;
             }
         } catch (e) {
@@ -122,23 +122,21 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            if (updatedWax.personalRating != undefined){
+            if (updatedWax.personal_rating != undefined){
                 let sql = `
-                    insert into wax_owners (user_id, product_id, quantity, personal_rating) 
-                    values ($1, $2, $3, $4) returning product_id
+                    update wax_owners set (quantity, personal_rating) = ($3, $4) where (user_id, product_id) = ($1, $2);
                 `;
 
-                let rs = await client.query(sql, [updatedWax.userID, updatedWax.productID, updatedWax.quantity, updatedWax.personalRating]);
-                updatedWax.productID = rs.rows[0].id;
+                let rs = await client.query(sql, [updatedWax.user_id, updatedWax.wax_id, updatedWax.quantity, updatedWax.personal_rating]);
+                updatedWax.wax_id = rs.rows[0].id;
                 return true;
-            }else if (updatedWax.personalRating == undefined){
+            }else if (updatedWax.personal_rating == undefined){
                 let sql = `
-                    insert into wax_owners (user_id, product_id, quantity) 
-                    values ($1, $2, $3) returning product_id
+                    update wax_owners set quantity = $3 where (user_id, product_id) = ($1, $2);
                 `;
             
-                let rs = await client.query(sql, [updatedWax.userID, updatedWax.productID, updatedWax.quantity]);
-                updatedWax.productID = rs.rows[0].id;
+                let rs = await client.query(sql, [updatedWax.user_id, updatedWax.wax_id, updatedWax.quantity]);
+                updatedWax.wax_id = rs.rows[0].id;
                 return true;
             }
         }catch (e) {

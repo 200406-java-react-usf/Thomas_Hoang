@@ -58,7 +58,7 @@ export class OwnedService {
             if (!isValidObject(newWax, 'id')) {
                 throw new BadRequestError('Invalid property values found in provided wax.');
             }
-            let waxAvailable = await this.isWaxAddedYet(newWax.productName, newWax.brand);
+            let waxAvailable = await this.isWaxAddedYet(newWax.user_id, newWax.wax_id);
             if (!waxAvailable) {
                 throw new ResourcePersistenceError('The provided wax is already in the database.');
             }
@@ -90,9 +90,9 @@ export class OwnedService {
             throw e;
         }
     }
-    async isWaxAddedYet(productName: string, brand: string): Promise<boolean> {
+    async isWaxAddedYet(user_id: number, product_id: number): Promise<boolean> {
         try {
-            await this.getWaxByUniqueKey({ 'product_name': productName }) && this.getWaxByUniqueKey({ 'brand_name': brand });
+            await this.getWaxByUniqueKey({ 'user_id': user_id }) && this.getWaxByUniqueKey({ 'product_id': product_id });
         }
         catch (e) {
             console.log('Wax is not added yet.');
