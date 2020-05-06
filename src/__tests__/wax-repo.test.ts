@@ -128,25 +128,46 @@ describe('waxRepo', () => {
     test('should resolve to a wax object if save returns a valid wax', async () => {
         expect.hasAssertions();
 
-        let mockWax = new Wax(1, 'productName', 'brand', 'category', 0.50, false, 1, "description");
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
+        let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockWax2 = new Wax(2, 'product2', 'brand', 'category', 0.50, true, 5, undefined);
+        let mockWax3 = new Wax(3, 'product3', 'brand', 'category', 0.50, true, undefined, undefined);
 
-        let result = await sut.save(mockWax);
+        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax1);
+        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax2);
+        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax3);
 
-        expect(result).toBeTruthy();
-        expect(result instanceof Wax).toBe(true);
+        let result1 = await sut.save(mockWax1);
+        let result2 = await sut.save(mockWax1);
+        let result3 = await sut.save(mockWax1);
+
+        expect(result1).toBeTruthy();
+        expect(result1 instanceof Wax).toBe(true);
+        expect(result2).toBeTruthy();
+        expect(result2 instanceof Wax).toBe(true);
+        expect(result3).toBeTruthy();
+        expect(result3 instanceof Wax).toBe(true);
     });
 
     test('should resolve to true if updates a valid id', async () => {
-
         expect.hasAssertions();
-        let mockWax = new Wax(1, 'productName', 'brand', 'category', 0.50, false, 1, "description");
-        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax);
+
+        let mockWax1 = new Wax(1, 'product', 'brand', 'category', 0.50, true, 5, 'Blank Description');
+        let mockWax2 = new Wax(2, 'product2', 'brand', 'category', 0.50, true, 5, undefined);
+        let mockWax3 = new Wax(3, 'product3', 'brand', 'category', 0.50, true, undefined, undefined);
+
+        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax1);
+        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax2);
+        (mockMapper.mapWaxResultSet as jest.Mock).mockReturnValue(mockWax3);
 
 
-        let result = await sut.update(mockWax);
 
-        expect(result).toBeTruthy();
+        let result1 = await sut.save(mockWax1);
+        let result2 = await sut.save(mockWax1);
+        let result3 = await sut.save(mockWax1);
+
+        expect(result1).toBeTruthy();
+        expect(result2).toBeTruthy();
+        expect(result3).toBeTruthy();
     });
 
     test('Should resolve to true when deleteById deletes a valid wax ', async () => {
