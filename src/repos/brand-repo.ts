@@ -1,7 +1,6 @@
 import { Brand } from '../models/brand';
 import { CrudRepository } from './crud-repo';
-import {
-    NotImplementedError, 
+import { 
     ResourceNotFoundError, 
     ResourcePersistenceError,
     InternalServerError

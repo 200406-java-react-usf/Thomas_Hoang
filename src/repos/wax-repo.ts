@@ -4,7 +4,6 @@ import {
     BadRequestError, 
     ResourceNotFoundError,
     ResourcePersistenceError,
-    NotImplementedError,
     InternalServerError
 } from '../errors/errors';
 import { PoolClient } from 'pg';

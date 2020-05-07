@@ -1,7 +1,6 @@
 import { User } from '../models/user';
 import { CrudRepository } from './crud-repo';
-import {
-    NotImplementedError, 
+import { 
     ResourceNotFoundError, 
     ResourcePersistenceError,
     InternalServerError

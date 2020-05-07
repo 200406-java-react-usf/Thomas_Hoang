@@ -4,7 +4,6 @@ import { isValidId, isValidStrings, isValidObject, isPropertyOf, isEmptyObject }
 import { 
     BadRequestError, 
     ResourceNotFoundError, 
-    NotImplementedError, 
     ResourcePersistenceError, 
     AuthenticationError 
 } from "../errors/errors";
