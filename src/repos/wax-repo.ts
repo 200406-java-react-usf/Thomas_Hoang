@@ -49,7 +49,7 @@ export class WaxRepository implements CrudRepository<Wax> {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where w.id = $1`;
+            let sql = `${this.baseQuery}`;
             let rs = await client.query(sql, [id]);
             return mapWaxResultSet(rs.rows[0])
         }catch (e) {
@@ -82,7 +82,7 @@ export class WaxRepository implements CrudRepository<Wax> {
         try {
             client = await connectionPool.connect();
             let brandID = (await client.query('select id from brands where brand_name = $1', [newWax.brand])).rows[0].id;
-            if (newWax.scentStrength != undefined && newWax.scentDescription != undefined){
+            if (newWax.scentStrength && newWax.scentDescription){
                 let sql = `
                     insert into waxes (product_name, brand_id, price, limited edition, category, strength, description) 
                     values ($1, $2, $3, $4, $5, $6, $7) returning id
@@ -91,7 +91,7 @@ export class WaxRepository implements CrudRepository<Wax> {
                 let rs = await client.query(sql, [newWax.productName, brandID , newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength, newWax.scentDescription]);
                 newWax.productID = rs.rows[0].id;
                 return newWax;
-            }else if (newWax.scentStrength != undefined){
+            }else if (newWax.scentStrength){
                 let sql = `
                     insert into waxes (product_name, brand_id, price, limited edition, category, strength) 
                     values ($1, $2, $3, $4, $5, $6) returning id
@@ -100,7 +100,7 @@ export class WaxRepository implements CrudRepository<Wax> {
                 let rs = await client.query(sql, [newWax.productName , brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentStrength]);
                 newWax.productID = rs.rows[0].id;
                 return newWax;
-            }else if (newWax.scentDescription != undefined){
+            }else if (newWax.scentDescription){
                 let sql = `
                     insert into waxes (product_name, brand_id, price, limited edition, category, description) 
                     values ($1, $2, $3, $4, $5, $6) returning id
@@ -109,7 +109,7 @@ export class WaxRepository implements CrudRepository<Wax> {
                 let rs = await client.query(sql, [newWax.productName , brandID, newWax.productPrice, newWax.limitedEdition, newWax.scentCategory, newWax.scentDescription]);
                 newWax.productID = rs.rows[0].id;
                 return newWax;
-            }else if (newWax.scentStrength == undefined && newWax.scentDescription == undefined){
+            }else if (!newWax.scentStrength && !newWax.scentDescription){
                 let sql = `
                     insert into waxes (product_name, brand_id, price, limited edition, category) 
                     values ($1, $2, $3, $4, $5) returning id
@@ -134,15 +134,15 @@ export class WaxRepository implements CrudRepository<Wax> {
         try {
             client = await connectionPool.connect();
 
-            if (updatedWax.scentStrength != undefined && updatedWax.scentDescription != undefined){
+            if (updatedWax.scentStrength && updatedWax.scentDescription){
                 let sql = `update waxes set strength = $2, description = $3 where id = $1;`;
                 let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength, updatedWax.scentDescription]);
                 return true;
-            }else if (updatedWax.scentStrength != undefined){
+            }else if (updatedWax.scentStrength){
                 let sql = `update waxes set strength = $2 where id = $1;`;
                 let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentStrength]);
                 return true;
-            }else if (updatedWax.scentDescription != undefined){
+            }else if (updatedWax.scentDescription){
                 let sql = `update waxes set description = $2 where id = $1;`;
                 let rs = await client.query(sql, [updatedWax.productID, updatedWax.scentDescription]);
                 return true;
@@ -161,6 +161,7 @@ export class WaxRepository implements CrudRepository<Wax> {
         try {
             client = await connectionPool.connect();
             let sql = `delete from waxes where id = $1;`;
+            await client.query(sql, [id]);
             return true;
         }catch (e) {
             throw new InternalServerError();

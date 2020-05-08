@@ -40,7 +40,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try{
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where user_id = $1`;
+            let sql = `${this.baseQuery}`;
             let rs = await client.query(sql);
             return rs.rows.map(mapOwnedResultSet);
         }catch (e) {
@@ -88,7 +88,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            if (newOwned.wax_id != undefined){
+            if (newOwned.wax_id){
                 let sql = `
                     insert into wax_owners (user_id, product_id, quantity, personal_rating) 
                     values ($1, $2, $3, $4) returning user_id
@@ -97,7 +97,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
                 let rs = await client.query(sql, [newOwned.user_id, newOwned.wax_id, newOwned.quantity, newOwned.personal_rating]);
                 newOwned.wax_id = rs.rows[0].id;
                 return newOwned;
-            }else if (newOwned.personal_rating == undefined){
+            }else if (!newOwned.personal_rating){
                 let sql = `
                     insert into wax_owners (user_id, product_id, quantity) 
                     values ($1, $2, $3) returning user_id
@@ -121,7 +121,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
 
         try {
             client = await connectionPool.connect();
-            if (updatedWax.personal_rating != undefined){
+            if (updatedWax.personal_rating){
                 let sql = `
                     update wax_owners set (quantity, personal_rating) = ($3, $4) where (user_id, product_id) = ($1, $2);
                 `;
@@ -129,7 +129,7 @@ export class OwnedRepository implements CrudRepository<Owned> {
                 let rs = await client.query(sql, [updatedWax.user_id, updatedWax.wax_id, updatedWax.quantity, updatedWax.personal_rating]);
                 updatedWax.wax_id = rs.rows[0].id;
                 return true;
-            }else if (updatedWax.personal_rating == undefined){
+            }else if (!updatedWax.personal_rating){
                 let sql = `
                     update wax_owners set quantity = $3 where (user_id, product_id) = ($1, $2);
                 `;
